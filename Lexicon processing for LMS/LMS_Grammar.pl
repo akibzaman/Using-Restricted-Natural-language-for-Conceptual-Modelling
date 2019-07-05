@@ -110,9 +110,10 @@ np([num:N, type:fact_ob, func:_, arg:List]) -->
 v([num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:V])-->
   {lexicon( [cat:rel, wform:Y, type:bdrel, arg1:Z, arg2:K, sem:Rel])},
   process_objectification([X, Rel, V]).
-
+  
 process_objectification([X, Rel, F], P1, P2):-
-	F =.. [objectifies, X, Rel].
+	atomic_list_concat(X,V), F =.. [objectifies, V, Rel], 
+	assert(lexicon([cat:objectification, wform:V, arg1:V, arg2:Rel, sem:F])).
 
   
 %--------------------------------------------
