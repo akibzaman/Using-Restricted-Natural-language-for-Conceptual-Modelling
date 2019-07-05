@@ -27,7 +27,7 @@ specification(2,
 ['Student',name,is,of,string,data,type,'.'],
 ['Student', is, enrolled, in, program, '.'],
 ['Program', is, composed, of, unit, '.'],
-['Unit', is, belong, to, program, '.'],
+['Unit', belongs, to, program, '.'],
 ['Enrollment', objectifies, student, is, enrolled, in, program,'.']]).
 
 

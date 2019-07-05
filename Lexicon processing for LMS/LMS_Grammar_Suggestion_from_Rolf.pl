@@ -28,18 +28,15 @@ np([num:N, type:entity, arg:X, sem:Sem]) -->
    n([num:N, arg:X, sem:Sem]).
 
 
-n([num:N, arg:X, sem:Sem], P1, P2) :-
-   lexicon([cat:n, mode:proc, wform:WForm, num:N, type:DT, arg:X, sem:Sem], P1, P2). 
-   
-   
-lexicon([cat:n, mode:proc, wform:WForm, num:N, type:DT, arg:X, sem:Sem], P1, P2):- 
+n([num:N, arg:X, sem:Sem], P1, P2) :- 
    append(P3, [is, an, entity, '.'], P1), 
    P2 = [is, an, entity, '.'],
    lower_case_first_atom(P3, P4),
    atomic_list_concat(P4, '_', P5),
    Sem =.. [P5, X],
-   assert(lexicon([syn:[cat:noun, wform:P3, num:sg], sem:[type:entity,  arg:X, lit:Sem]])).
-%   assert(lexicon([cat:noun, wform:P3, num:sg, arg:X, sem:Sem])).
+   assert(lexicon([cat:noun, wform:P3, num:sg, arg:X, sem:Sem])).
+   
+ lexicon([mode:M, syn:[cat:noun, wform:P3, num:sg], sem:[type:entity,  arg:X, lit:student(X)]]).
 
 
 lower_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
@@ -51,24 +48,26 @@ lower_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
 % Data Type Declaration:- Student id is of integer/string/date data type.
 %--------------------------------------------
 
-s([sem:Sem]) --> 
-  np([num:N, type:data, arg:X, sem:Sem]), 
-  [is, of, DT, data, type, '.'].
+s([mode:M, sem:Sem]) --> 
+  np([mode:M, num:N, type:data, arg:X, sem:Sem]),
+  (
+     [is, of, string, data, type, '.']
+  ;
+     [is, of, integer, data, type, '.'] ).
 
 np([num:N, type:data, arg:X, sem:Sem]) -->
    n([num:N, type:data, arg:X, sem:Sem]).
 
 
-n([num:N, type:data, arg:X, sem:Sem], P1, P2) :- 
+n([proc:M, num:N, type:data, arg:X, sem:Sem], P1, P2) :- 
    append(P3, [is, of, DT, data, type,'.'], P1),
    P2 = [is, of, DT, data, type,'.'], 
    lower_case_first_atom(P3, P4),
    atomic_list_concat(P4, '_', P5),
    Sem =.. [P5, X],
-   assert(lexicon([syn:[cat:noun, wform:P3, num:sg], sem:[type:attribute, att_type:DT, arg:X, lit:Sem]])).
-%   assert(lexicon([cat:attribute, wform:P3, type:DT, num:sg, arg:X, sem:Sem])).
-
-			   
+   assert(lexicon([cat:attribute, wform:P3, type:DT, num:sg, arg:X, sem:Sem])).
+   
+		   
 %--------------------------------------------
 % Fact Type 
 %--------------------------------------------
@@ -81,17 +80,16 @@ verb([num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
   v([num:N, type:fact, arg:X, arg:Y, sem:Sem]).
 
 np([num:N, type:fact, func:_, arg:List]) -->
-  {lexicon([syn:[cat:noun, wform:List, num:sg], sem:[type:entity,  arg:X, lit:Sem]])}, List.
+  {lexicon([cat:noun, wform:List, num:sg, arg:X, sem:Sem])}, List.
    
 v([num:N, type:fact, arg:X, arg:Y, sem:Sem], P1, P2):-
-  findall(W, lexicon([syn:[cat:noun, wform:W, num:sg], sem:[type:entity,  arg:X, lit:Sem]]), Ent),
+  findall(W, lexicon([cat:noun, wform:W, num:sg, arg:X, sem:Sem]), Ent),
   search_v(Ent, P1, V),
   append(P3, [V,'.'], P1),  
   atomic_list_concat(P3,'_',P4), Y = V,
   atomic_list_concat(X, Xn), string_lower(Xn, X1), string_to_atom(X1, X2),  
   Sem =.. [P4, X2, Y],
-  assert(lexicon([syn:[cat:verb, wform:P3, num:sg], sem:[type:brel, arg1:X2, arg2:Y, lit:Sem]])).
-%  assert(lexicon([cat:rel, wform:P4, type:bdrel, arg1:X2, arg2:Y, sem:Sem])).
+  assert(lexicon([cat:rel, wform:P4, type:bdrel, arg1:X2, arg2:Y, sem:Sem])).
   
 search_v([], _, _).
 
@@ -112,18 +110,15 @@ verb([num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem])-->
   v([num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem]).
 
 np([num:N, type:fact_ob, func:_, arg:List]) -->
-  {lexicon([syn:[cat:noun, wform:List, num:sg], sem:[type:entity,  arg:X, lit:Sem]])}, List.
+  {lexicon([cat:noun, wform:List, num:sg, arg:X, sem:Sem])}, List.
 
 v([num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:V])-->
-  {lexicon([syn:[cat:verb, wform:P3, num:sg], sem:[type:brel, arg1:X2, arg2:Y, lit:Sem]])},
-  process_objectification([X, P3, X2, Y, Sem, V]).
+  {lexicon( [cat:rel, wform:Y, type:bdrel, arg1:Z, arg2:K, sem:Rel])},
+  process_objectification([X, Rel, V]).
   
-process_objectification([X, P3, X2, Y, Rel, F], P1, P2):-
-	atomic_list_concat(X,V), V1 =.. [V, E], 
-	atomic_list_concat(P3,'_',P4), P5 =.. [P4, X3, Y2], X3 =.. [X2, P], Y2 =.. [Y, K], 
-	F =.. [objectify, V1, E:P5], W = [X, objectify, Rel],
-	assert(lexicon([syn:[cat:verb, wform:W, num:sg], sem:[type:obj_rel, arg1:V, arg2:P4, lit:F]])).
-%	assert(lexicon([cat:objectification, wform:X, arg1:V, arg2:Rel, sem:F])).
+process_objectification([X, Rel, F], P1, P2):-
+	atomic_list_concat(X,V), F =.. [objectifies, V, Rel], 
+	assert(lexicon([cat:objectification, wform:V, arg1:V, arg2:Rel, sem:F])).
 
   
 %--------------------------------------------
