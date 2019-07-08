@@ -30,4 +30,14 @@ specification(2,
 ['Unit', belongs, to, program, '.'],
 ['Enrollment', objectifies, student, is, enrolled, in, program,'.']]).
 
-
+specification(3,
+[
+['Student',is,an,entity,'.'],
+['Program',is,an,entity,'.'],
+['Unit',is,an,entity,'.'],
+['Enrollment',is,an,entity,'.'],
+['Student',id,is,of,integer,data,type,'.'],
+['Student',name,is,of,string,data,type,'.'],
+['Student', is, enrolled, in, program, '.'],
+['Program', is, composed, of, unit, '.'],
+['Unit', belongs, to, program, '.']]).
