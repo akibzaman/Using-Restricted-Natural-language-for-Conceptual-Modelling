@@ -165,12 +165,15 @@ v([mode:gen, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem])-->
   {lexicon([cat:verb, wform:Arg2, num:sg, type:brel, arg1:X2, arg2:Y, sem:S])}, [X2], Arg2, [Y].
   
   %{ lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:Arg1, arg2:Arg2, sem:F]) }
+
+%-------------------------------------------------------------------------
   
 lexical_rule_objectification([X, WForm, X2, Y, Rel, F], P1, P2):-
+	(sublist(WForm, P1) ->
 	atomic_list_concat(X,V), V1 =.. [V, E], 
 	atomic_list_concat(WForm,'_',P4), P5 =.. [P4, A, B], X3 =.. [X2, P], Y2 =.. [Y, K], %P5 =.. [P4, X3, Y2]
 	F =.. [objectify, V1, E:P5], W = [V, objectify, Rel],
-	assert(lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:V, arg2:WForm, sem:F])).
+	assert(lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:V, arg2:WForm, sem:F]))).
    
 %------------------------------------------------------------------------
 
@@ -202,3 +205,19 @@ process_specification([Sentence|Sentences]) :-
   process_specification(Sentences).  
   
 %-------------------------------------------------------------------------
+
+
+
+sublist(Sub, List) :-
+   sublist_(List, Sub).
+   
+sublist_([], []).
+sublist_([H|T], Sub) :-
+	sublist__(T, H, Sub).
+
+sublist__([], H, [H]).
+sublist__([], _, []).
+sublist__([H|T], X, [X|Sub]) :-
+  sublist__(T, H, Sub).
+sublist__([H|T], _, Sub) :-
+  sublist__(T, H, Sub).
