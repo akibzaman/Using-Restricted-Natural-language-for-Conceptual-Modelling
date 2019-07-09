@@ -1,7 +1,7 @@
 % ===========================================
 % Bidirectional Grammar with Lexicon Creation
 % Author: Bayzid Ashik Hossain
-% Date: 08-07-2019
+% Date: 09-07-2019
 % ===========================================
 
 :- style_check([-discontiguous, -singleton]).
@@ -20,7 +20,7 @@
 % Entity Declaration:- Student is an entity.
 %--------------------------------------------
 
-s([mode:M, sem:Sem]) --> 
+s([mode:M, type:entity, sem:Sem]) --> 
   np([mode:M, num:sg, type:entity, sem:Sem]), 
   [is, an, entity, '.'].
 
@@ -61,7 +61,7 @@ lower_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
 % Data Type Declaration:- Student id is of integer/string/date data type.
 %--------------------------------------------
 
-s([mode:M, sem:Sem]) --> 
+s([mode:M, type:attribute, sem:Sem]) --> 
   np([mode:M, num:N, type:attribute, dt:DT, sem:Sem]), 
   [is, of, DT, data, type, '.'].
 
@@ -98,9 +98,9 @@ process_noun_att([wform:List3, dt:D, arg:X, sem:Sem], List1, List2):-
 % Fact Type Declaration:- Student is enrolled in program.
 %--------------------------------------------
 
-s([mode:M, sem:Sem]) --> 
+s([mode:M, type:fact, sem:Sem]) --> 
   np([mode:M, num:N, type:fact, func:subj, arg:X]), 
-  vp([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]), [Y, '.'].
+  vp([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]), ['.'].
   
 vp([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
   verb([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]).
@@ -115,7 +115,7 @@ verb([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
    lexical_rule([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem]).
    
 verb([mode:gen, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
-   { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, WForm.
+   { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, WForm, [Y].
 
 %------------------------------------------------------------------------------
 
@@ -142,80 +142,36 @@ search_v([En|Ent], P1, P2):-
 % Fact Type [Objectification]
 %--------------------------------------------
 
-s([mode:M, sem:Sem]) --> 
-  np([mode:M, num:N, type:fact_ob, func:subj, arg:X]),
+s([mode:M, type:fact_ob, sem:Sem]) --> 
+  np([mode:M, num:N, type:fact_ob, func:subj, arg:X, sem:Sem]),
   [objectifies],	
-  verb([mode:M, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem]).
+  verb([mode:M, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem]), ['.'].
   
 verb([mode:M, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem])-->
-  v([mode:proc, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem]).
+  v([mode:M, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem]).
 
-np([mode:M, num:N, type:fact_ob, func:_, arg:List]) -->
-  {lexicon([cat:noun, wform:List, num:N, type:entity, arg:_X, sem:Sem])}, List.
-
+np([mode:proc, num:N, type:fact_ob, func:_, arg:List, sem:Sem]) -->
+  {lexicon([cat:noun, wform:List, num:N, type:entity, arg:_X, sem:S])}, List.
+  
+np([mode:gen, num:N, type:fact_ob, func:_, arg:List, sem:Sem]) -->
+  { lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:Arg1, arg2:Arg2, sem:Sem]) }, [Arg1].
+  
 v([mode:proc, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:V])-->
-  {lexicon([cat:verb, wform:P3, num:sg, type:brel, arg1:X2, arg2:Y, sem:Sem])},
-  lexical_rule_objectification([X, P3, X2, Y, Sem, V]).
+  {lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X2, arg2:Y, sem:Sem])},
+  lexical_rule_objectification([X, WForm, X2, Y, Sem, V]).
   
-lexical_rule_objectification([X, P3, X2, Y, Rel, F], P1, P2):-
+v([mode:gen, num:N, type:fact_ob, arg:X, arg:Y, arg:Z, arg:K, sem:Sem])-->
+  { lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:Arg1, arg2:Arg2, sem:Sem]) },
+  {lexicon([cat:verb, wform:Arg2, num:sg, type:brel, arg1:X2, arg2:Y, sem:S])}, [X2], Arg2, [Y].
+  
+  %{ lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:Arg1, arg2:Arg2, sem:F]) }
+  
+lexical_rule_objectification([X, WForm, X2, Y, Rel, F], P1, P2):-
 	atomic_list_concat(X,V), V1 =.. [V, E], 
-	atomic_list_concat(P3,'_',P4), P5 =.. [P4, X3, Y2], X3 =.. [X2, P], Y2 =.. [Y, K], 
-	F =.. [objectify, V1, E:P5], W = [X, objectify, Rel],
-	assert(lexicon([syn:[cat:verb, wform:W, num:sg], sem:[type:obj_rel, arg1:V, arg2:P4, lit:F]])).
-%	assert(lexicon([cat:objectification, wform:X, arg1:V, arg2:Rel, sem:F])).
-  
-  
-  
-  
-  
-  
-/*
- 
-%--------------------------------------------------------------------------------
-  
- s([mode:M, sem:Sem]) --> 
-  np([mode:M, num:N, type:fact, func:subj, arg:X, sem:Sem]), 
-  vp([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]), ['.'].
-  
-vp([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
-  verb([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]),
-  np([mode:M, num:N, type:fact, func:obj, arg:Z, sem:Sem]),
-  lexical_rule_fact([mode:M, num:N, type:fact, arg:X, arg:Y, arg:Z, sem:Sem]).
-
-np([mode:proc, num:N, type:fact, func:_, arg:WForm, sem:_]) -->
-  { lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:_X, sem:Sem]) }, WForm.
-
-np([mode:gen, num:N, type:fact, func:_, arg:X, sem:Sem]) -->
-  { lexicon([cat:verb, wform:P3, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, [X].
+	atomic_list_concat(WForm,'_',P4), P5 =.. [P4, A, B], X3 =.. [X2, P], Y2 =.. [Y, K], %P5 =.. [P4, X3, Y2]
+	F =.. [objectify, V1, E:P5], W = [V, objectify, Rel],
+	assert(lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:V, arg2:WForm, sem:F])).
    
-verb([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
-   lexical_rule([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem]).
-   
-verb([mode:gen, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
-   { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, WForm. 
-  
-lexical_rule([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem], P1, P2):-
-  findall(W, lexicon([cat:noun, wform:W, num:N, type:entity, arg:_X, sem:Sem]), Ent),
-  search_v(Ent, P1, V),
-  append(P3, [V,'.'], P1),  
-  atomic_list_concat(P3,'_',P4),
-  P2 = P3, Y = P4.
-
-lexical_rule_noun([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem], P1, P2):-  
-  
-  
-lexical_rule_fact([mode:M, num:N, type:fact, arg:X, arg:Y, arg:Z, sem:Sem], P1, P2):-
-  Sem =.. [Y, X, Z],
-  assert(lexicon([cat:verb, wform:P3, num:sg, type:brel, arg1:X, arg2:Z, sem:Sem])).
-  
-search_v([], _, _) :- false.
-
-search_v([En|Ent], P1, P2):-
-  atomic_list_concat(En,V), string_lower(V, V1), string_to_atom(V1, V2),
-  (member(V2, P1) -> P2 = V2 ; search_v(Ent, P1, P2)).
-  
-*/
- 
 %------------------------------------------------------------------------
 
 test(proc, Num) :-
@@ -230,7 +186,12 @@ test(proc, Num) :-
 process_specification([]).
 
 process_specification([Sentence|Sentences]) :-
-  s([mode:proc, sem:Sem], Sentence, []),
+  (
+  (s([mode:proc, type:entity, sem:Sem], Sentence, [])); 
+  (s([mode:proc, type:attribute, sem:Sem], Sentence, [])) ; 
+  (s([mode:proc, type:fact, sem:Sem], Sentence, []));
+  (s([mode:proc, type:fact_ob, sem:Sem], Sentence, []))
+  ),
   write('Sentence: '), 
   writeq(Sentence), 
   nl,
