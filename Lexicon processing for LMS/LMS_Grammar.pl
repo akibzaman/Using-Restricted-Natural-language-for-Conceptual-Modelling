@@ -1,7 +1,7 @@
 % ===========================================
 % Bidirectional Grammar with Lexicon Creation
 % Author: Bayzid Ashik Hossain
-% Date: 09-07-2019
+% Date: 10-07-2019
 % ===========================================
 
 :- style_check([-discontiguous, -singleton]).
@@ -127,8 +127,8 @@ lexical_rule([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem], P1, P2):-
   (search_v(Ent, [V], Y) ->
   atomic_list_concat(X, Xn), string_lower(Xn, X1), string_to_atom(X1, X2), Y = V1,
   %X3 =.. [X2, A], Y1 =.. [Y, B],
-  Sem =.. [P4, X2, Y],
-  assert(lexicon([cat:verb, wform:P3, num:sg, type:brel, arg1:X2, arg2:Y, sem:Sem]))).
+  Sem =.. [P4, A, B],
+  assert(lexicon([cat:verb, wform:P3, num:sg, type:brel, A:X2, B:Y, sem:Sem]))).
 %  assert(lexicon([cat:rel, wform:P4, type:bdrel, arg1:X2, arg2:Y, sem:Sem])).
   
 search_v([], _, _) :- false.
@@ -174,9 +174,153 @@ lexical_rule_objectification([X, WForm, X2, Y, Rel, F], P1, P2):-
 	atomic_list_concat(WForm,'_',P4), P5 =.. [P4, A, B], X3 =.. [X2, P], Y2 =.. [Y, K], %P5 =.. [P4, X3, Y2]
 	F =.. [objectify, V1, E:P5], W = [V, objectify, Rel],
 	assert(lexicon([cat:verb, wform:W, num:sg, type:obj_rel, arg1:V, arg2:WForm, sem:F]))).
+	
+	
+sublist(Sub, List) :-
+   sublist_(List, Sub).
    
-%------------------------------------------------------------------------
+sublist_([], []).
+sublist_([H|T], Sub) :-
+	sublist__(T, H, Sub).
 
+sublist__([], H, [H]).
+sublist__([], _, []).
+sublist__([H|T], X, [X|Sub]) :-
+  sublist__(T, H, Sub).
+sublist__([H|T], _, Sub) :-
+  sublist__(T, H, Sub).	
+ 
+%--------------------------------------------
+% Object Property with exact cardinality :- Every student is enrolled in exactly 1 program.
+%--------------------------------------------
+
+s([mode:const, type:exact, sem:Sem]) -->
+   np_s([num:N, mode:const, type:exact, arg:X, scope:Sco, sem:Sem]),
+   vp_s([num:N, mode:const, type:exact, arg:X, scope:Sco]),
+   ['.'].
+ 
+np_s([num:N, mode:const, type:exact, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, mode:const, type:exact, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:N, mode:const, type:exact, arg:X, sem:Res]).
+
+np_o([num:N, mode:const, type:exact, arg:K, scope:Sco, sem:Sem]) -->
+   det_o([num:N, mode:const, type:exact, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, mode:const, type:exact, arg:K, sem:Res]).
+
+n([num:N, mode:const, type:exact, arg:X, sem:Res])-->
+   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
+  
+vp_s([num:N, mode:const, type:exact, arg:X, scope:Sco]) -->
+   v_s([num:N, mode:const, type:exact, arg:X, arg:K, sem:S]),
+   np_o([num:_, mode:const, type:exact, arg:K, scope:S, sem:Sco]).
+   
+n_o([num:N, mode:const, type:exact, arg:K, sem:Sco])-->
+   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
+   
+v_s([num:N, mode:const, type:exact, arg:X, arg:K, sem:Sem])-->
+   {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
+
+det_s([num:N, mode:const, type:exact, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+   ['Every'].
+
+det_o([num:N, mode:const, type:exact, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(L))]) -->
+   [exactly, L].
+   
+%--------------------------------------------------  
+lr_entity_match(V, SV, P1, P3):-
+  findall(W, lexicon([cat:noun, wform:W, num:N, type:entity, arg:_X, sem:Sem]), Ent),
+  search_v_lr(Ent, P1, V), atomic_list_concat(V,V1), string_lower(V1, SV1), 
+  string_to_atom(SV1, SV), append([SV], P3, P1).
+
+%--------------------------------------------
+% Object Property with one or more cardinality :- Every program is composed of one or more unit.
+%--------------------------------------------
+
+s([mode:const, type:some, sem:Sem]) -->
+   np_s([num:N, mode:const, type:some, arg:X, scope:Sco, sem:Sem]),
+   vp_s([num:N, mode:const, type:some, arg:X, scope:Sco]),
+   ['.'].
+ 
+np_s([num:N, mode:const, type:some, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:N, mode:const, type:some, arg:X, sem:Res]).
+
+np_o([num:N, mode:const, type:some, arg:K, scope:Sco, sem:Sem]) -->
+   det_o([num:N, mode:const, type:some, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, mode:const, type:some, arg:K, sem:Res]).
+
+n([num:N, mode:const, type:some, arg:X, sem:Res])-->
+   lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
+  
+vp_s([num:N, mode:const, type:some, arg:X, scope:Sco]) -->
+   v_s([num:N, mode:const, type:some, arg:X, arg:K, sem:S]),
+   np_o([num:_, mode:const, type:some, arg:K, scope:S, sem:Sco]).
+   
+n_o([num:N, mode:const, type:some, arg:K, sem:Sco])-->
+   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
+   
+v_s([num:N, mode:const, type:some, arg:X, arg:K, sem:Sem])-->
+   {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
+
+det_s([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+   ['Every'].
+
+det_o([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(1):Sco:max(*))]) -->
+   [one, or, more].
+
+
+%--------------------------------------------
+% Object Property with at least L and at most M cardinality :- Every student studies at least 1 and at most 4 unit.
+% Object Property with minimum and maximum cardinality constraint
+%--------------------------------------------
+
+s([mode:const, type:minmax, sem:Sem]) -->
+   np_s([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]),
+   vp_s([num:N, mode:const, type:minmax, arg:X, scope:Sco]),
+   ['.'].
+ 
+np_s([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:N, mode:const, type:minmax, arg:X, sem:Res]).
+
+np_o([num:N, mode:const, type:minmax, arg:K, scope:Sco, sem:Sem]) -->
+   det_o([num:N, mode:const, type:minmax, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, mode:const, type:minmax, arg:K, sem:Res]).
+
+n([num:N, mode:const, type:minmax, arg:X, sem:Res])-->
+   lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
+  
+vp_s([num:N, mode:const, type:minmax, arg:X, scope:Sco]) -->
+   v_s([num:N, mode:const, type:minmax, arg:X, arg:K, sem:S]),
+   np_o([num:_, mode:const, type:minmax, arg:K, scope:S, sem:Sco]).
+   
+n_o([num:N, mode:const, type:minmax, arg:K, sem:Sco])-->
+   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
+   
+v_s([num:N, mode:const, type:minmax, arg:X, arg:K, sem:Sem])-->
+   {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
+
+det_s([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+   ['Every'].
+
+det_o([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(M))]) -->
+   [at,least,L,and,at,most,M].
+
+
+%-----------------------------------------------------------
+
+search_v_lr([], _, _) :- false.
+
+search_v_lr([En|Ent], P1, P2):-
+  atomic_list_concat(En,V), string_lower(V, V1), string_to_atom(V1, V2),
+  (member(V2, P1) -> P2 = En ; search_v_lr(Ent, P1, P2)).
+
+upper_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
+   atom_codes(Atom1, [Char|Chars1]),
+   to_upper(Char, LowerChar),
+   atom_codes(Atom2, [LowerChar|Chars1]).  
+  
+%-----------------------------------------------------------
 test(proc, Num) :-
   specification(Num, Text),
   process_specification(Text).
@@ -190,10 +334,13 @@ process_specification([]).
 
 process_specification([Sentence|Sentences]) :-
   (
-  (s([mode:proc, type:entity, sem:Sem], Sentence, [])); 
+  (s([mode:proc, type:entity, sem:Sem], Sentence, [])) ; 
   (s([mode:proc, type:attribute, sem:Sem], Sentence, [])) ; 
-  (s([mode:proc, type:fact, sem:Sem], Sentence, []));
-  (s([mode:proc, type:fact_ob, sem:Sem], Sentence, []))
+  (s([mode:proc, type:fact, sem:Sem], Sentence, [])) ;
+  (s([mode:proc, type:fact_ob, sem:Sem], Sentence, []));
+  (s([mode:const, type:exact, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:some, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:minmax, sem:Sem], Sentence, []))
   ),
   write('Sentence: '), 
   writeq(Sentence), 
@@ -208,16 +355,6 @@ process_specification([Sentence|Sentences]) :-
 
 
 
-sublist(Sub, List) :-
-   sublist_(List, Sub).
-   
-sublist_([], []).
-sublist_([H|T], Sub) :-
-	sublist__(T, H, Sub).
 
-sublist__([], H, [H]).
-sublist__([], _, []).
-sublist__([H|T], X, [X|Sub]) :-
-  sublist__(T, H, Sub).
-sublist__([H|T], _, Sub) :-
-  sublist__(T, H, Sub).
+  
+ 
