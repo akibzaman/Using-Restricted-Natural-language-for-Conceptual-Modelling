@@ -32,7 +32,8 @@ specification(2,
 ['Enrollment', objectifies, student, is, enrolled, in, program,'.'],
 ['Every',student,is,enrolled,in,exactly,1,program,'.'],
 ['Every',program,is,composed,of,one,or,more,unit,'.'],
-['Every',student,studies,at,least,1,and,at,most,4,unit,'.']]).
+['Every',student,studies,at,least,1,and,at,most,4,unit,'.'],
+['Every',student,possesses,a,student,id,and,possesses,a,student,name,'.']]).
 
 specification(3,
 [
