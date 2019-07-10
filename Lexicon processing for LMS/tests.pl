@@ -26,9 +26,13 @@ specification(2,
 ['Student',id,is,of,integer,data,type,'.'],
 ['Student',name,is,of,string,data,type,'.'],
 ['Student', is, enrolled, in, program, '.'],
+['Student', studies, unit, '.'],
 ['Program', is, composed, of, unit, '.'],
 ['Unit', belongs, to, program, '.'],
-['Enrollment', objectifies, student, is, enrolled, in, program,'.']]).
+['Enrollment', objectifies, student, is, enrolled, in, program,'.'],
+['Every',student,is,enrolled,in,exactly,1,program,'.'],
+['Every',program,is,composed,of,one,or,more,unit,'.'],
+['Every',student,studies,at,least,1,and,at,most,4,unit,'.']]).
 
 specification(3,
 [
