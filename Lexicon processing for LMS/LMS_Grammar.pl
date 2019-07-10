@@ -275,11 +275,11 @@ det_o([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:exist
 %--------------------------------------------
 
 s([mode:const, type:minmax, sem:Sem]) -->
-   np_s([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]),
-   vp_s([num:N, mode:const, type:minmax, arg:X, scope:Sco]),
+   np([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]),
+   vp([num:N, mode:const, type:minmax, arg:X, scope:Sco]),
    ['.'].
  
-np_s([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]) -->
+np([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]) -->
    det_s([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
    n([num:N, mode:const, type:minmax, arg:X, sem:Res]).
 
@@ -290,7 +290,7 @@ np_o([num:N, mode:const, type:minmax, arg:K, scope:Sco, sem:Sem]) -->
 n([num:N, mode:const, type:minmax, arg:X, sem:Res])-->
    lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
   
-vp_s([num:N, mode:const, type:minmax, arg:X, scope:Sco]) -->
+vp([num:N, mode:const, type:minmax, arg:X, scope:Sco]) -->
    v_s([num:N, mode:const, type:minmax, arg:X, arg:K, sem:S]),
    np_o([num:_, mode:const, type:minmax, arg:K, scope:S, sem:Sco]).
    
@@ -318,7 +318,75 @@ search_v_lr([En|Ent], P1, P2):-
 upper_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
    atom_codes(Atom1, [Char|Chars1]),
    to_upper(Char, LowerChar),
-   atom_codes(Atom2, [LowerChar|Chars1]).  
+   atom_codes(Atom2, [LowerChar|Chars1]).
+
+
+%--------------------------------------------
+% Data Property "Student"
+%--------------------------------------------
+
+s([mode:const, type:dp, sem:Sem]) -->
+   np_dp([num:N, mode:const, type:dp, arg:X, scope:Sco, sem:Sem]),
+   vp([crd:'+', num:N, mode:const, type:dp, arg:X, sem:Sco]),
+   ['.'].
+
+   
+np_dp([num:N, mode:const, type:dp, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:sg, arg:X, sem:Res]). % edited
+
+   
+np_odp([num:N, arg:Y, scope:Sco, sem:Sem]) -->
+   det_odp([num:N, arg:Y, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, arg:Y, sem:Res]).
+   
+n([num:N, arg:X, sem:Res]) -->
+  lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}.
+   
+n_o([num:N, arg:Y, sem:Res]) -->
+  lr_attribute_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:attribute, dt:DT, arg:Y, sem:Res])}.
+   
+
+vp([crd:'+', num:N, mode:const, type:dp, arg:X, sem:(Sco1 & Sco2)]) -->   
+    vp([crd:'-', num:N, mode:const, type:dp, arg:X, sem:Sco1]),
+    cc([wfm:[and]]),
+    vp([crd:'+', num:N, mode:const, type:dp, arg:X, sem:Sco2]).
+   
+
+vp([crd:'+', num:N, mode:const, type:dp, arg:X, sem:Sco]) -->   
+    v([num:N, arg:X, arg:Y, sem:Sem]), 
+    np_odp([num:_, arg:Y, scope:Sem, sem:Sco]).
+
+
+vp([crd:'-', num:N, mode:const, type:dp, arg:X, sem:Sco]) -->   
+    v([num:N, arg:X, arg:Y, sem:Sem]), 
+    np_odp([num:_, arg:Y, scope:Sem, sem:Sco]).
+
+v([num:N, arg:X, arg:Y, sem:possess(X, Y)]) -->
+   [possesses].
+
+det_s([num:N, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+   ['Every'].
+
+det_odp([num:N, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[a].
+
+%det_odp([num:N, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[an].
+
+cc([wfm:[and]]) --> [and].   
+%-----------------------------------------------------------
+
+lr_attribute_match(V, SV, P1, P3):-
+  findall(W, lexicon([cat:noun, wform:W, num:N, type:attribute, dt:DT, arg:X, sem:Sem]), Ent),
+  search_v_att_lr(Ent, P1, V), downcase_list(V,V1), append(V1, P3, P1).
+  
+search_v_att_lr([], _, _) :- false.
+
+search_v_att_lr([En|Ent], P1, P2):-
+  downcase_list(En,V), 
+  (sublist(V, P1) -> P2 = En ; search_v_att_lr(Ent, P1, P2)).
+  
+downcase_list(AnyCaseList, DownCaseList):-
+  maplist(downcase_atom, AnyCaseList, DownCaseList).
   
 %-----------------------------------------------------------
 test(proc, Num) :-
@@ -340,7 +408,8 @@ process_specification([Sentence|Sentences]) :-
   (s([mode:proc, type:fact_ob, sem:Sem], Sentence, []));
   (s([mode:const, type:exact, sem:Sem], Sentence, [])) ;
   (s([mode:const, type:some, sem:Sem], Sentence, [])) ;
-  (s([mode:const, type:minmax, sem:Sem], Sentence, []))
+  (s([mode:const, type:minmax, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:dp, sem:Sem], Sentence, []))
   ),
   write('Sentence: '), 
   writeq(Sentence), 
