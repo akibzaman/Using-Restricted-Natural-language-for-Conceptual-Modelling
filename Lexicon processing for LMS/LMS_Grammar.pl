@@ -1,7 +1,7 @@
 % ===========================================
 % Bidirectional Grammar with Lexicon Creation
 % Author: Bayzid Ashik Hossain
-% Date: 10-07-2019
+% Date: 11-07-2019
 % ===========================================
 
 :- style_check([-discontiguous, -singleton]).
@@ -208,7 +208,7 @@ np_o([num:N, mode:const, type:exact, arg:K, scope:Sco, sem:Sem]) -->
    n_o([num:N, mode:const, type:exact, arg:K, sem:Res]).
 
 n([num:N, mode:const, type:exact, arg:X, sem:Res])-->
-   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
+   lr_entity_match_brelsub(V, SV), {lexicon([cat:noun, wform:SV, num:N, type:entity, arg:X, sem:Res])}. 
   
 vp_s([num:N, mode:const, type:exact, arg:X, scope:Sco]) -->
    v_s([num:N, mode:const, type:exact, arg:X, arg:K, sem:S]),
@@ -250,7 +250,7 @@ np_o([num:N, mode:const, type:some, arg:K, scope:Sco, sem:Sem]) -->
    n_o([num:N, mode:const, type:some, arg:K, sem:Res]).
 
 n([num:N, mode:const, type:some, arg:X, sem:Res])-->
-   lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
+   lr_entity_match_brelsub(V, SV1), {lexicon([cat:noun, wform:SV1, num:N, type:entity, arg:X, sem:Res])}. 
   
 vp_s([num:N, mode:const, type:some, arg:X, scope:Sco]) -->
    v_s([num:N, mode:const, type:some, arg:X, arg:K, sem:S]),
@@ -266,9 +266,20 @@ det_s([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:foral
    ['Every'].
 
 det_o([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(1):Sco:max(*))]) -->
-   [one, or, more].
+   [1, or, more].
 
+%--------------------------------------------
 
+lr_entity_match_brelsub(V, SV1, P1, P2):-
+	findall(WForm, lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]), Rel),
+    search_rel_sub(Rel, P1, V), upper_case_first_atom(V, SV1), append(V, P2, P1).
+	
+search_rel_sub([], _, _) :- false.
+
+search_rel_sub([R|Rel], P1, P3):-
+  (sublist(R, P1) -> findall(X, lexicon([cat:verb, wform:R, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]), P3) ; 
+                     search_rel_sub(Rel, P1, P3)). 
+	
 %--------------------------------------------
 % Object Property with at least L and at most M cardinality :- Every student studies at least 1 and at most 4 unit.
 % Object Property with minimum and maximum cardinality constraint
@@ -288,7 +299,7 @@ np_o([num:N, mode:const, type:minmax, arg:K, scope:Sco, sem:Sem]) -->
    n_o([num:N, mode:const, type:minmax, arg:K, sem:Res]).
 
 n([num:N, mode:const, type:minmax, arg:X, sem:Res])-->
-   lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}. 
+   lr_entity_match_brelsub(V, SV1), {lexicon([cat:noun, wform:SV1, num:N, type:entity, arg:X, sem:Res])}. 
   
 vp([num:N, mode:const, type:minmax, arg:X, scope:Sco]) -->
    v_s([num:N, mode:const, type:minmax, arg:X, arg:K, sem:S]),
@@ -363,12 +374,12 @@ vp([crd:'-', num:N, mode:const, type:dp, arg:X, sem:Sco]) -->
     np_odp([num:_, arg:Y, scope:Sem, sem:Sco]).
 
 v([num:N, arg:X, arg:Y, sem:possess(X, Y)]) -->
-   [possesses].
+   [has].
 
 det_s([num:N, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
    ['Every'].
 
-det_odp([num:N, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[a].
+det_odp([num:N, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[exactly, 1].
 
 %det_odp([num:N, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[an].
 
