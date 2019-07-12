@@ -1,7 +1,7 @@
 % ===========================================
 % Bidirectional Grammar with Lexicon Creation
 % Author: Bayzid Ashik Hossain
-% Date: 11-07-2019
+% Date: 12-07-2019
 % ===========================================
 
 :- style_check([-discontiguous, -singleton]).
@@ -194,36 +194,42 @@ sublist__([H|T], _, Sub) :-
 % Object Property with exact cardinality :- Every student is enrolled in exactly 1 program.
 %--------------------------------------------
 
-s([mode:const, type:exact, sem:Sem]) -->
-   np_s([num:N, mode:const, type:exact, arg:X, scope:Sco, sem:Sem]),
-   vp_s([num:N, mode:const, type:exact, arg:X, scope:Sco]),
+s([mode:M, type:const, sem:Sem]) -->
+   np_s([num:N, mode:M, type:const, arg:X, scope:Sco, sem:Sem]),
+   vp_s([num:N, mode:M, type:const, arg:X, scope:Sco]),
    ['.'].
  
-np_s([num:N, mode:const, type:exact, arg:X, scope:Sco, sem:Sem]) -->
-   det_s([num:N, mode:const, type:exact, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
-   n([num:N, mode:const, type:exact, arg:X, sem:Res]).
+np_s([num:N, mode:M, type:const, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, mode:M, type:const, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:N, mode:M, type:const, arg:X, sem:Res]).
 
-np_o([num:N, mode:const, type:exact, arg:K, scope:Sco, sem:Sem]) -->
-   det_o([num:N, mode:const, type:exact, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
-   n_o([num:N, mode:const, type:exact, arg:K, sem:Res]).
+np_o([num:N, mode:M, type:const, arg:K, scope:Sco, sem:Sem]) -->
+   det_o([num:N, mode:M, type:const, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, mode:M, type:const, arg:K, sem:Res]).
 
-n([num:N, mode:const, type:exact, arg:X, sem:Res])-->
+n([num:N, mode:proc, type:const, arg:X, sem:Res])-->
    lr_entity_match_brelsub(V, SV), {lexicon([cat:noun, wform:SV, num:N, type:entity, arg:X, sem:Res])}. 
-  
-vp_s([num:N, mode:const, type:exact, arg:X, scope:Sco]) -->
-   v_s([num:N, mode:const, type:exact, arg:X, arg:K, sem:S]),
-   np_o([num:_, mode:const, type:exact, arg:K, scope:S, sem:Sco]).
    
-n_o([num:N, mode:const, type:exact, arg:K, sem:Sco])-->
+n([num:N, mode:gen, type:const, arg:X, sem:Res])-->
+   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:X, sem:Res])}, downcase_noun(WForm, W).
+  
+vp_s([num:N, mode:M, type:const, arg:X, scope:Sco]) -->
+   v_s([num:N, mode:M, type:const, arg:X, arg:K, sem:S]),
+   np_o([num:_, mode:M, type:const, arg:K, scope:S, sem:Sco]).
+   
+n_o([num:N, mode:proc, type:const, arg:K, sem:Sco])-->
    lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
    
-v_s([num:N, mode:const, type:exact, arg:X, arg:K, sem:Sem])-->
+n_o([num:N, mode:gen, type:const, arg:K, sem:Sco])-->
+   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:K, sem:Sco])}, downcase_noun(WForm, W). 
+   
+v_s([num:N, mode:M, type:const, arg:X, arg:K, sem:Sem])-->
    {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
-
-det_s([num:N, mode:const, type:exact, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+   
+det_s([num:N, mode:M, type:const, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
    ['Every'].
 
-det_o([num:N, mode:const, type:exact, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(L))]) -->
+det_o([num:N, mode:M, type:const, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(L))]) -->
    [exactly, L].
    
 %--------------------------------------------------  
@@ -231,41 +237,50 @@ lr_entity_match(V, SV, P1, P3):-
   findall(W, lexicon([cat:noun, wform:W, num:N, type:entity, arg:_X, sem:Sem]), Ent),
   search_v_lr(Ent, P1, V), atomic_list_concat(V,V1), string_lower(V1, SV1), 
   string_to_atom(SV1, SV), append([SV], P3, P1).
+  
+downcase_noun(WForm, W, L1, L2):-
+  downcase_list(WForm, W), append(W, L2, L1).
 
 %--------------------------------------------
 % Object Property with one or more cardinality :- Every program is composed of one or more unit.
 %--------------------------------------------
 
-s([mode:const, type:some, sem:Sem]) -->
-   np_s([num:N, mode:const, type:some, arg:X, scope:Sco, sem:Sem]),
-   vp_s([num:N, mode:const, type:some, arg:X, scope:Sco]),
+s([mode:M, type:const_m, sem:Sem]) -->
+   np_s([num:N, mode:M, type:const_m, arg:X, scope:Sco, sem:Sem]),
+   vp_s([num:N, mode:M, type:const_m, arg:X, scope:Sco]),
    ['.'].
  
-np_s([num:N, mode:const, type:some, arg:X, scope:Sco, sem:Sem]) -->
-   det_s([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
-   n([num:N, mode:const, type:some, arg:X, sem:Res]).
+np_s([num:N, mode:M, type:const_m, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, mode:M, type:const_m, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n_s([num:N, mode:M, type:const_m, arg:X, sem:Res]).
 
-np_o([num:N, mode:const, type:some, arg:K, scope:Sco, sem:Sem]) -->
-   det_o([num:N, mode:const, type:some, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
-   n_o([num:N, mode:const, type:some, arg:K, sem:Res]).
+np_o([num:N, mode:M, type:const_m, arg:K, scope:Sco, sem:Sem]) -->
+   det_o([num:N, mode:M, type:const_m, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, mode:M, type:const_m, arg:K, sem:Res]).
 
-n([num:N, mode:const, type:some, arg:X, sem:Res])-->
+n_s([num:N, mode:proc, type:const_m, arg:X, sem:Res])-->
    lr_entity_match_brelsub(V, SV1), {lexicon([cat:noun, wform:SV1, num:N, type:entity, arg:X, sem:Res])}. 
-  
-vp_s([num:N, mode:const, type:some, arg:X, scope:Sco]) -->
-   v_s([num:N, mode:const, type:some, arg:X, arg:K, sem:S]),
-   np_o([num:_, mode:const, type:some, arg:K, scope:S, sem:Sco]).
    
-n_o([num:N, mode:const, type:some, arg:K, sem:Sco])-->
+n_s([num:N, mode:gen, type:const_m, arg:X, sem:Res])-->
+   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:X, sem:Res])}, downcase_noun(WForm, W). 
+  
+vp_s([num:N, mode:M, type:const_m, arg:X, scope:Sco]) -->
+   v_s([num:N, mode:M, type:const_m, arg:X, arg:K, sem:S]),
+   np_o([num:_, mode:M, type:const_m, arg:K, scope:S, sem:Sco]).
+   
+n_o([num:N, mode:proc, type:const_m, arg:K, sem:Sco])-->
    lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
    
-v_s([num:N, mode:const, type:some, arg:X, arg:K, sem:Sem])-->
+n_o([num:N, mode:gen, type:const_m, arg:K, sem:Sco])-->
+   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:K, sem:Sco])}, downcase_noun(WForm, W). 
+   
+v_s([num:N, mode:M, type:const_m, arg:X, arg:K, sem:Sem])-->
    {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
 
-det_s([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+det_s([num:N, mode:M, type:const_m, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
    ['Every'].
 
-det_o([num:N, mode:const, type:some, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(1):Sco:max(*))]) -->
+det_o([num:N, mode:M, type:const_m, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(1):Sco:max(*))]) -->
    [1, or, more].
 
 %--------------------------------------------
@@ -285,37 +300,43 @@ search_rel_sub([R|Rel], P1, P3):-
 % Object Property with minimum and maximum cardinality constraint
 %--------------------------------------------
 
-s([mode:const, type:minmax, sem:Sem]) -->
-   np([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]),
-   vp([num:N, mode:const, type:minmax, arg:X, scope:Sco]),
+s([mode:M, type:minmax, sem:Sem]) -->
+   np([num:N, mode:M, type:minmax, arg:X, scope:Sco, sem:Sem]),
+   vp([num:N, mode:M, type:minmax, arg:X, scope:Sco]),
    ['.'].
  
-np([num:N, mode:const, type:minmax, arg:X, scope:Sco, sem:Sem]) -->
-   det_s([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
-   n([num:N, mode:const, type:minmax, arg:X, sem:Res]).
+np([num:N, mode:M, type:minmax, arg:X, scope:Sco, sem:Sem]) -->
+   det_s([num:N, mode:M, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:N, mode:M, type:minmax, arg:X, sem:Res]).
 
-np_o([num:N, mode:const, type:minmax, arg:K, scope:Sco, sem:Sem]) -->
-   det_o([num:N, mode:const, type:minmax, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
-   n_o([num:N, mode:const, type:minmax, arg:K, sem:Res]).
+np_o([num:N, mode:M, type:minmax, arg:K, scope:Sco, sem:Sem]) -->
+   det_o([num:N, mode:M, type:minmax, arg:K, restrictor:Res, scope:Sco, sem:Sem]),
+   n_o([num:N, mode:M, type:minmax, arg:K, sem:Res]).
 
-n([num:N, mode:const, type:minmax, arg:X, sem:Res])-->
+n([num:N, mode:proc, type:minmax, arg:X, sem:Res])-->
    lr_entity_match_brelsub(V, SV1), {lexicon([cat:noun, wform:SV1, num:N, type:entity, arg:X, sem:Res])}. 
+   
+n([num:N, mode:gen, type:minmax, arg:X, sem:Res])-->
+   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:X, sem:Res])}, downcase_noun(WForm, W). 
   
-vp([num:N, mode:const, type:minmax, arg:X, scope:Sco]) -->
-   v_s([num:N, mode:const, type:minmax, arg:X, arg:K, sem:S]),
-   np_o([num:_, mode:const, type:minmax, arg:K, scope:S, sem:Sco]).
+vp([num:N, mode:M, type:minmax, arg:X, scope:Sco]) -->
+   v_s([num:N, mode:M, type:minmax, arg:X, arg:K, sem:S]),
+   np_o([num:_, mode:M, type:minmax, arg:K, scope:S, sem:Sco]).
    
-n_o([num:N, mode:const, type:minmax, arg:K, sem:Sco])-->
-   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
+n_o([num:N, mode:proc, type:minmax, arg:K, sem:Sco])-->
+   lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}.
+
+n_o([num:N, mode:gen, type:minmax, arg:K, sem:Sco])-->
+   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:K, sem:Sco])}, downcase_noun(WForm, W).     
    
-v_s([num:N, mode:const, type:minmax, arg:X, arg:K, sem:Sem])-->
+v_s([num:N, mode:M, type:minmax, arg:X, arg:K, sem:Sem])-->
    {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
 
-det_s([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
+det_s([num:N, mode:M, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) -->
    ['Every'].
 
-det_o([num:N, mode:const, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(M))]) -->
-   [at,least,L,and,at,most,M].
+det_o([num:N, mode:M, type:minmax, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(H))]) -->
+   [at,least,L,and,at,most,H].
 
 
 %-----------------------------------------------------------
@@ -399,6 +420,31 @@ search_v_att_lr([En|Ent], P1, P2):-
 downcase_list(AnyCaseList, DownCaseList):-
   maplist(downcase_atom, AnyCaseList, DownCaseList).
   
+%-------------------------------------------------------------
+% Entity Declaration / Class Declaration :- Every student is an entity.
+%-------------------------------------------------------------
+
+s([mode:const, type:ed, sem:Sem]) --> 
+   np_d([num:N, mode:const, type:ed, arg:X, scope:Sco, sem:Sem]), 
+   vp_d([num:N, mode:const, type:ed, arg:X, scope:Sco]), ['.'].
+
+np_d([num:N, mode:const, type:ed, arg:X, scope:Sco, sem:Sem]) --> 
+   det_d([num:N, arg:X, restrictor:Res, scope:Sco, sem:Sem]), 
+   n_d([num:N, arg:X, sem:Res]).
+   
+n_d([num:N, arg:X, sem:Res]) -->
+   lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}.
+
+vp_d([num:N, mode:const, type:ed, arg:X, scope:Sco]) --> 
+   iv_d([num:N, arg:X, scope:Sco]).
+
+det_d([num:sg, arg:X, restrictor:Res, scope:Sco, sem:forall(X, Res ==> Sco)]) --> 
+   ['Every'].
+
+iv_d([num:sg, arg:X, scope:entity(X)]) --> 
+   [is, an, entity, type].  
+  
+
 %-----------------------------------------------------------
 test(proc, Num) :-
   specification(Num, Text),
@@ -417,10 +463,11 @@ process_specification([Sentence|Sentences]) :-
   (s([mode:proc, type:attribute, sem:Sem], Sentence, [])) ; 
   (s([mode:proc, type:fact, sem:Sem], Sentence, [])) ;
   (s([mode:proc, type:fact_ob, sem:Sem], Sentence, []));
-  (s([mode:const, type:exact, sem:Sem], Sentence, [])) ;
-  (s([mode:const, type:some, sem:Sem], Sentence, [])) ;
-  (s([mode:const, type:minmax, sem:Sem], Sentence, [])) ;
-  (s([mode:const, type:dp, sem:Sem], Sentence, []))
+  (s([mode:proc, type:const, sem:Sem], Sentence, [])) ;
+  (s([mode:proc, type:minmax, sem:Sem], Sentence, [])) ;
+  (s([mode:proc, type:const_m, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:dp, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:ed, sem:Sem], Sentence, []))
   ),
   write('Sentence: '), 
   writeq(Sentence), 
@@ -432,9 +479,51 @@ process_specification([Sentence|Sentences]) :-
   process_specification(Sentences).  
   
 %-------------------------------------------------------------------------
+% Storing the lexicon file.
+%-------------------------------------------------------------------------
 
+store_lexicon():-
+   findall(S, (lexicon(S), numbervars(S)), List), 
+   open('Lexicon.txt',write,Stream),
+   write_lexicon(List, Stream), close(Stream).
 
+write_lexicon([],_).
 
+write_lexicon([L|List], Stream):-
+	write(Stream,L), 
+	nl(Stream), 
+	write_lexicon(List, Stream).
 
+%-------------------------------------------------------------------------
+% Generating IDL for the constraints.
+%-------------------------------------------------------------------------
+test(const, Num) :-
+  specification(Num, Text),
+  open('const.txt',write,Stream),
+  process_const(Text, Stream), close(Stream).
   
+process_const([],_).
+
+process_const([Sentence|Sentences], Stream) :-
+  (
+  (s([mode:const, type:exact, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:some, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:minmax, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:dp, sem:Sem], Sentence, [])) ;
+  (s([mode:const, type:ed, sem:Sem], Sentence, []))
+  ),
+  write('Sentence: '), 
+  writeq(Sentence), 
+  nl,
+  numbervars(Sem),
+  write('Sem:      '),
+  writeq(Sem), 
+  nl, nl,
+  write(Stream,Sem), 
+  nl(Stream), 
+  process_const(Sentences, Stream).  
+
+%-------------------------------------------------------------------------
+ process_cnl_spec():-
+   test(proc, 2), store_lexicon(), test(const, 3). 
  
