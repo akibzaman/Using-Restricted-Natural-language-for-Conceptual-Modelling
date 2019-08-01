@@ -112,3 +112,4 @@ specification(4,
 [ [[forall(C,entity(C,program)==>exists(D,attribute(D,program_id)&possess(C,D))&exists(E,attribute(E,program_name)&possess(C,E)))|A]|B]-[A|B] ],
 [ [[forall(C,entity(C,enrollment)==>exists(D,attribute(D,enrollment_date)&possess(C,D)))|A]|B]-[A|B] ]
 ]).
+
