@@ -2,18 +2,17 @@
 % Bidirectional Grammar for Lexicon Creation
 % with difference list implementation
 % Author: Bayzid Ashik Hossain
-% Date: 31-07-2019
+% Date: 2-08-2019
 % ===========================================
 
 :- style_check([-discontiguous, -singleton]).
-:- consult(tests).
 
 :- op(900, yfx, '==>').
 :- op(800, yfx, '&').
 :- op(900, yfx, ':').
 
 :- dynamic lexicon/1.
-
+:- consult(tests).
 
 %------------------------------------------------
 % Entity Declaration:- Student is an entity type.
@@ -24,12 +23,12 @@ s([mode:M, type:entity, sem:Sem]) -->
   [is, an, entity, type, '.'].
 
 np([mode:M, num:N, type:entity, sem:Sem]) -->
-   noun([mode:M, num:N, type:entity, sem:Sem]).
+   n([mode:M, num:N, type:entity, sem:Sem]).
 
-noun([mode:proc, num:N, type:entity, sem:[T1|T2]-[[T|T1]|T2]]) -->
+n([mode:proc, num:N, type:entity, sem:[T1|T2]-[[T|T1]|T2]]) -->
    lexical_rule([cat:noun, num:N, type:entity, sem:T]).
 
-noun([mode:gen, num:N, type:entity, sem:[[T|T1]|T2]-[T1|T2]]) -->
+n([mode:gen, num:N, type:entity, sem:[[T|T1]|T2]-[T1|T2]]) -->
    { lexicon([cat:noun, wform:WForm, num:sg, type:entity, arg:X, sem:T]) },
    WForm. 
 
@@ -62,13 +61,13 @@ s([mode:M, type:attribute, sem:Sem]) -->
   [is, of, DT, data, type, '.'].
 
 np([mode:M, num:N, type:attribute, dt:DT, sem:Sem]) -->
-   noun([mode:M, num:N, type:attribute, dt:DT, sem:Sem]).
+   n([mode:M, num:N, type:attribute, dt:DT, sem:Sem]).
    
 
-noun([mode:proc, num:N, type:attribute, dt:DT, sem:[T1|T2]-[[T|T1]|T2]])-->
+n([mode:proc, num:N, type:attribute, dt:DT, sem:[T1|T2]-[[T|T1]|T2]])-->
    lexical_rule([cat:noun, wform:WForm, num:N, type:attribute, dt:DT, arg:_X, sem:T]).
    
-noun([mode:gen, num:N, type:attribute, dt:DT, sem:[[T|T1]|T2]-[T1|T2]])-->
+n([mode:gen, num:N, type:attribute, dt:DT, sem:[[T|T1]|T2]-[T1|T2]])-->
    { lexicon([cat:noun, wform:WForm, num:N, type:attribute, dt:DT, arg:_X, sem:T]) },
    WForm. 
 
@@ -95,12 +94,12 @@ s([mode:M, type:fact, sem:Sem]) -->
   vp([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]), ['.'].
   
 vp([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:[T1|T2]-[[T|T1]|T2]])-->
-  verb([mode:proc, type:fact, label:List]),
+  v([mode:proc, type:fact, label:List]),
   np([mode:proc, num:N, type:fact, func:obj, arg:Y]),
   lexical_rule([mode:proc, num:N, type:fact, arg:X, arg:Y, label:List, sem:T]).
   
 vp([mode:gen, num:N, type:fact, arg:X, arg:Y, sem:[[T|T1]|T2]-[T1|T2]])-->
-  verb([mode:gen, type:fact, sem:T]),
+  v([mode:gen, type:fact, sem:T]),
   np([mode:gen, num:N, type:fact, func:obj, arg:Y, sem:T]).
 
 np([mode:proc, num:N, type:fact, func:subj, arg:X, sem:Sem]) -->
@@ -118,10 +117,10 @@ np([mode:gen, num:N, type:fact, func:obj, arg:Y, sem:Sem]) -->
   { lexicon([cat:noun, wform:Noun, num:sg, type:entity, arg:_X, sem:Y]), lower_case(Noun, NP) }, NP.
   
   
-verb([mode:proc, type:fact, label:List3], List1, L) :-
+v([mode:proc, type:fact, label:List3], List1, L) :-
    append(List3, List2, List1), uppercase_first_atom(List2, L).
    
-verb([mode:gen, type:fact, sem:Sem])-->
+v([mode:gen, type:fact, sem:Sem])-->
    { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, WForm.
 
 %------------------------------------------------------------------------------
@@ -146,9 +145,7 @@ uppercase_first_atom([Atom1|Rest], [Atom2|Rest]) :-
 
 s([mode:proc, type:fact_ob, sem:[T1|T2]-[[objectify(S,T)|T1]|T2]]) -->  
   np([mode:proc, num:N, type:fact_ob, func:subj, arg:X, sem:S]),
-  vp([wform:objectify]), ['"'],
-  s([mode:proc, type:ob_fact, sem:[A|B]-[[T|A]|B]]), 
-  ['"'], ['.'],
+  vp([wform:objectify]), ['"'], s([mode:proc, type:ob_fact, sem:[A|B]-[[T|A]|B]]), ['"'], ['.'],
   {assert(lexicon([cat:verb, wform:[objectifies], num:sg, type:ob_rel, arg1:S, arg2:T, sem:objectify(S,T)]))}.
   
 s([mode:gen, type:fact_ob, sem:[[objectify(S,T)|T1]|T2]-[T1|T2]]) --> 
@@ -163,18 +160,18 @@ np([mode:gen, num:N, type:fact_ob, func:_, arg:List, sem:S]) -->
 
 s([mode:proc, type:ob_fact, sem:Sem]) --> 
   np([mode:proc, num:N, type:ob_fact, func:subj, arg:X]), 
-  vp([mode:proc, num:N, type:ob_fact, arg:X, arg:Y, sem:Sem]). %, ['.'].
+  vp([mode:proc, num:N, type:ob_fact, arg:X, arg:Y, sem:Sem]).
   
 s([mode:gen, type:ob_fact, sem:Sem]) --> 
   np([mode:gen, num:sg, type:ob_fact, func:subj, arg:X, arg:Y, sem:Sem]), 
   vp([mode:gen, num:sg, type:ob_fact, arg:X, arg:Y, sem:[[Sem|T1]|T2]-[T1|T2]]).
   
 vp([mode:proc, num:N, type:ob_fact, arg:X, arg:Y, sem:[T1|T2]-[[List|T1]|T2]])-->
-  verb([mode:proc, type:ob_fact, label:List]),
+  v([mode:proc, type:ob_fact, label:List]),
   np([mode:proc, num:N, type:ob_fact, func:obj, arg:Y]).
   
 vp([mode:gen, num:N, type:ob_fact, arg:X, arg:Y, sem:[[Sem|T1]|T2]-[T1|T2]])-->
-  verb([mode:gen, type:ob_fact, sem:Sem]),
+  v([mode:gen, type:ob_fact, sem:Sem]),
   np([mode:gen, num:N, type:ob_fact, func:obj, sem:Y]).
 
 np([mode:proc, num:N, type:ob_fact, func:_, arg:Sem]) -->
@@ -187,10 +184,10 @@ np([mode:gen, num:N, type:ob_fact, func:subj, arg:X, arg:Y, sem:Sem]) -->
 np([mode:gen, num:N, type:ob_fact, func:obj, sem:Y]) -->
   { lexicon([cat:noun, wform:Noun, num:N, type:entity, arg:_X, sem:Y]), lower_case(Noun, NP) }, NP.
   
-verb([mode:proc, type:ob_fact, label:Sem]) -->
+v([mode:proc, type:ob_fact, label:Sem]) -->
   {lexicon([cat:verb, wform:List3, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem])}, List3.
    
-verb([mode:gen, type:ob_fact, sem:Sem])-->
+v([mode:gen, type:ob_fact, sem:Sem])-->
    { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, WForm.
    
 vp([wform:objectify]) --> [objectifies].
@@ -207,27 +204,27 @@ vp([wform:objectify]) --> [objectifies].
 
 
 s([mode:M, type:const, sem:Sem]) -->
-   np([num:N, mode:M, type:const, arg:X, func:subj, scope:Sco, sem:Sem]),
-   vp([num:N, mode:M, type:const, arg:X, scope:Sco]),
+   np([num:N, mode:M, type:const, arg:X, func:subj, restrictor:Res, scope:Sco, sem:Sem]),
+   vp([num:N, mode:M, type:const, arg:X, restrictor:Res, scope:Sco]),
    ['.'].
  
-np([num:N, mode:M, type:const, arg:X, func:subj, scope:Sco, sem:Sem]) -->
+np([num:N, mode:M, type:const, arg:X, func:subj, restrictor:Res, scope:Sco, sem:Sem]) -->
    det([num:N, mode:M, type:const, arg:X, func:subj, restrictor:Res, scope:Sco, sem:Sem]),
    n([num:N, mode:M, type:const, arg:X, func:subj, sem:Res]).
    
-vp([num:N, mode:M, type:const, arg:X, scope:Sco]) -->
-   v([num:N, mode:M, type:const, arg:X, arg:K, sem:S]),
-   np([num:_, mode:M, type:const, arg:K, func:obj, scope:S, sem:Sco]).
+vp([num:N, mode:M, type:const, arg:X, restrictor:Res, scope:Sco]) -->
+   v([num:N, mode:M, type:const, restrictor:Res, restrictor:Res2, sem:S]),
+   np([num:_, mode:M, type:const, arg:K, restrictor:Res2, func:obj, scope:S, sem:Sco]).
 
-np([num:N, mode:M, type:const, arg:K, func:obj, scope:Sco, sem:Sem]) -->
-   det([num:N, mode:M, type:const, arg:K, func:obj, restrictor:Res, scope:Sco, sem:Sem]),
-   n([num:N, mode:M, type:const, arg:K, func:obj, sem:Res]). % plural form
+np([num:N, mode:M, type:const, arg:K, restrictor:Res2, func:obj, scope:Sco, sem:Sem]) -->
+   det([num:N, mode:M, type:const, arg:K, func:obj, restrictor:Res2, scope:Sco, sem:Sem]),
+   n([num:N, mode:M, type:const, arg:K, func:obj, sem:Res2]). % plural form
 
 n([num:N, mode:proc, type:const, arg:X, func:subj, sem:Res])-->
-   lr_entity_match_brelsub(V, SV), {lexicon([cat:noun, wform:SV, num:N, type:entity, arg:X, sem:Res])}. 
+   lr_entity_match_brelsub(V, SV), {lexicon([cat:noun, wform:SV, num:sg, type:entity, arg:X, sem:Res])}. 
    
 n([num:N, mode:gen, type:const, arg:X, func:subj, sem:Res])-->
-   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:X, sem:Res])}, downcase_noun(WForm, W).
+   {lexicon([cat:noun, wform:WForm, num:sg, type:entity, arg:X, sem:Res])}, downcase_noun(WForm, W).
    
 n([num:N, mode:proc, type:const, arg:K, func:obj, sem:Sco])-->
    lr_entity_match(V, SV), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:K, sem:Sco])}. 
@@ -235,8 +232,8 @@ n([num:N, mode:proc, type:const, arg:K, func:obj, sem:Sco])-->
 n([num:N, mode:gen, type:const, arg:K, func:obj, sem:Sco])-->
    {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:K, sem:Sco])}, downcase_noun(WForm, W). 
    
-v([num:N, mode:M, type:const, arg:X, arg:K, sem:Sem])-->
-   {lexicon([cat:verb, wform:WForm, num:sg, type:brel, X:_X, K:_K, sem:Sem])}, WForm.
+v([num:N, mode:M, type:const, restrictor:Res, restrictor:Res2, sem:Sem])-->  
+   {lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:Res, arg2:Res2, sem:Sem])}, WForm. 
 
 det([num:N, mode:proc, type:const, arg:X, func:subj, restrictor:Res, scope:Sco, sem:[A|B]-[[forall(X, Res ==> Sco)|A]|B]]) -->
    ['Every'].
@@ -245,13 +242,13 @@ det([num:N, mode:gen, type:const, arg:X, func:subj, restrictor:Res, scope:Sco, s
    ['Every'].
 
 det([num:N, mode:M, type:const, arg:X, func:obj, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(L))]) -->
-   [exactly, L].
+   [exactly, L], {((number(L), L>1) -> N=pl ; N=sg)}.
    
 det([num:N, mode:M, type:const, arg:X, func:obj, restrictor:Res, scope:Sco, sem:exists(X, Res & min(1):Sco:max(m))]) -->
-   [1, or, more].
+   [1, or, more], {N=pl}.
    
 det([num:N, mode:M, type:const, arg:X, func:obj, restrictor:Res, scope:Sco, sem:exists(X, Res & min(L):Sco:max(U))]) -->
-   [at, least, L, and, at, most, U], {number(L), number(U), L>0, U>0, L<U}.
+   [at, least, L, and, at, most, U], {number(L), number(U), L>0, U>0, L<U, N=pl}.
    
 %--------------------------------------------------  
 lr_entity_match(V, SV, P1, P3):-
@@ -305,28 +302,28 @@ morphology(W, Wo):-
 %--------------------------------------------
 
 s([mode:M, type:const_dp, sem:Sem]) -->
-   np_dp([num:N, mode:M, type:const_dp, arg:X, scope:Sco, sem:Sem]),
+   np([num:N, mode:M, type:const_dp, func:subj, arg:X, scope:Sco, sem:Sem]),
    vp([crd:'+', num:N, mode:M, type:const_dp, arg:X, sem:Sco]),
    ['.'].
 
-np_dp([num:N, mode:M, type:const_dp, arg:X, scope:Sco, sem:Sem]) -->
-   det_s([num:N, mode:M, type:const_dp, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
-   n([num:sg, mode:M, type:const_dp, arg:X, sem:Res]).
+np([num:N, mode:M, type:const_dp, func:subj, arg:X, scope:Sco, sem:Sem]) -->
+   det([num:N, mode:M, type:const_dp, func:subj, arg:X, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:sg, mode:M, type:const_dp, func:subj, arg:X, sem:Res]).
    
-np_odp([num:N, mode:M, type:const_dp, arg:Y, scope:Sco, sem:Sem]) -->
-   det_odp([num:N, mode:M, type:const_dp, arg:Y, restrictor:Res, scope:Sco, sem:Sem]),
-   n_o([num:N, mode:M, type:const_dp, arg:Y, sem:Res]).
+np([num:N, mode:M, type:const_dp, func:obj, arg:Y, scope:Sco, sem:Sem]) -->
+   det([num:N, mode:M, type:const_dp, func:obj, arg:Y, restrictor:Res, scope:Sco, sem:Sem]),
+   n([num:N, mode:M, type:const_dp, func:obj, arg:Y, sem:Res]).
    
-n([num:N, mode:proc, type:const_dp, arg:X, sem:Res]) -->
+n([num:N, mode:proc, type:const_dp, func:subj, arg:X, sem:Res]) -->
   lr_entity_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:entity, arg:X, sem:Res])}.
   
-n([num:N, mode:gen, type:const_dp, arg:X, sem:Res]) -->
+n([num:N, mode:gen, type:const_dp, func:subj, arg:X, sem:Res]) -->
   {lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:X, sem:Res])}, downcase_noun(WForm, W).
    
-n_o([num:N, mode:proc, type:const_dp, arg:Y, sem:Res]) -->
+n([num:N, mode:proc, type:const_dp, func:obj, arg:Y, sem:Res]) -->
   lr_attribute_match(V, SV1), {lexicon([cat:noun, wform:V, num:N, type:attribute, dt:DT, arg:Y, sem:Res])}.
   
-n_o([num:N, mode:gen, type:const_dp, arg:Y, sem:Res]) -->
+n([num:N, mode:gen, type:const_dp, func:obj, arg:Y, sem:Res]) -->
   {lexicon([cat:noun, wform:WForm, num:N, type:attribute, dt:DT, arg:Y, sem:Res])}, downcase_noun(WForm, W).
    
 
@@ -338,27 +335,26 @@ vp([crd:'+', num:N, mode:M, type:const_dp, arg:X, sem:(Sco1 & Sco2)]) -->
 
 vp([crd:'+', num:N, mode:M, type:const_dp, arg:X, sem:Sco]) -->   
     v([num:N, mode:M, type:const_dp, arg:X, arg:Y, sem:Sem]), 
-    np_odp([num:_, mode:M, type:const_dp, arg:Y, scope:Sem, sem:Sco]).
+    np([num:_, mode:M, type:const_dp, func:obj, arg:Y, scope:Sem, sem:Sco]).
 
 
 vp([crd:'-', num:N, mode:M, type:const_dp, arg:X, sem:Sco]) -->   
     v([num:N, mode:M, type:const_dp, arg:X, arg:Y, sem:Sem]), 
-    np_odp([num:_, mode:M, type:const_dp, arg:Y, scope:Sem, sem:Sco]).
+    np([num:_, mode:M, type:const_dp, func:obj, arg:Y, scope:Sem, sem:Sco]).
 
 v([num:N, mode:M, type:const_dp, arg:X, arg:Y, sem:possess(X, Y)]) -->
    [has].
 
-det_s([num:N, mode:proc, type:const_dp, arg:X, restrictor:Res, scope:Sco, sem:[A|B]-[[forall(X, Res ==> Sco)|A]|B]]) -->
+det([num:N, mode:proc, type:const_dp, func:subj, arg:X, restrictor:Res, scope:Sco, sem:[A|B]-[[forall(X, Res ==> Sco)|A]|B]]) -->
    ['Every'].
    
-det_s([num:N, mode:gen, type:const_dp, arg:X, restrictor:Res, scope:Sco, sem:[[forall(X, Res ==> Sco)|A]|B]-[A|B]]) -->
+det([num:N, mode:gen, type:const_dp, func:subj, arg:X, restrictor:Res, scope:Sco, sem:[[forall(X, Res ==> Sco)|A]|B]-[A|B]]) -->
    ['Every'].
 
-det_odp([num:N, mode:M, type:const_dp, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[exactly, 1].
-
-%det_odp([num:N, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[an].
+det([num:N, mode:M, type:const_dp, func:obj, arg:X, restrictor:Res, scope:Sco, sem:exists(X, Res & Sco)]) -->[exactly, 1].
 
 cc([wfm:[and]]) --> [and].   
+
 %-----------------------------------------------------------
 
 lr_attribute_match(V, SV, P1, P3):-
@@ -381,6 +377,10 @@ test(proc, Num) :-
 %  generate_specification(Text).
 
 
+%------------------------------------------------
+% Generate IDL from specification
+%------------------------------------------------
+
 process_specification([]).
 
 process_specification([Sentence|Sentences]) :-
@@ -389,6 +389,7 @@ process_specification([Sentence|Sentences]) :-
   (s([mode:proc, type:attribute, sem:Sem], Sentence, []));
   (s([mode:proc, type:fact, sem:Sem], Sentence, []));
   (s([mode:proc, type:fact_ob, sem:Sem], Sentence, []));
+  (s([mode:proc, type:const, sem:Sem], Sentence, []));
   (s([mode:proc, type:const_dp, sem:Sem], Sentence, []) )
   ),
   write('Sentence: '), 
@@ -408,5 +409,36 @@ read_specification(Num):-
 readt([]).
 
 readt([[Sentence]|Sentences]) :-
-	tokenize_atom(Sentence, S),
-	process_specification([S]), readt(Sentences).
+%  write('Sentence: '), 
+%  writeq(Sentence), 
+  nl,
+  tokenize_atom(Sentence, S),
+  process_specification([S]), readt(Sentences).
+	
+%---------------------------------------------------
+% Generate Verbalisation from IDL
+%---------------------------------------------------
+generate_specification([]).
+
+generate_specification([[Sentence]|Sentences]) :-
+  (
+  (s([mode:gen, type:entity, sem:Sentence], Sem, []));
+  (s([mode:gen, type:attribute, sem:Sentence], Sem, []));
+  (s([mode:gen, type:fact, sem:Sentence], Sem, []));
+  (s([mode:gen, type:fact_ob, sem:Sentence], Sem, []));
+  (s([mode:gen, type:const, sem:Sentence], Sem, []));
+  (s([mode:gen, type:const_dp, sem:Sentence], Sem, []))
+  ),
+  %write('Sem: '),  
+  %writeq(Sentence), 
+  nl,
+  append(S1,['.'], Sem), atomic_list_concat(S1,' ',S2),
+  atom_concat(S2,'.', Sen), 
+  write('Sentence:      '),
+  writeq(Sen), 
+  nl,
+  generate_specification(Sentences). 
+  
+generate_verbalisation(Num):-
+	specification(Num, Text),
+	generate_specification(Text).
