@@ -20,7 +20,7 @@
 	   
 	vp([num:N, mode:M, type:const, restrictor:Res, scope:Sco]) -->
 	   v([num:N, mode:M, type:const, arg1:Res, arg2:Res2, sem:S]),
-	   np([num:_N, mode:M, type:const, arg:Y, restrictor:Res2, func:obj, scope:S, sem:Sco]).
+	   np([num:_N, mode:M, type:const, arg:X, restrictor:Res2, func:obj, scope:S, sem:Sco]).
 
 	np([num:N, mode:proc, type:const, arg:X, restrictor:Res2, func:obj, scope:Sco, sem:Sem]) -->
 	   cst([num:N, mode:proc, type:const, arg:X, func:obj, restrictor:Res2, scope:Sco, sem:[A|B]-[[Sem|A]|B]]),
