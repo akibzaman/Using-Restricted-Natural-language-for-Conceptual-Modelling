@@ -62,11 +62,11 @@ uppercase_first_atom([Atom1|Rest], [Atom2|Rest]) :-
    to_upper(Char, LowerChar),
    atom_codes(Atom2, [LowerChar|Chars1]).
    
-test3 :-
+test1 :-
     s([mode:proc, type:fact, sem:[[]]-L],['Student',is,enrolled,in,program, '.'], []),
     numbervars(L), write(L), nl, nl.
  
-test4 :-
+test2 :-
     Sem = [[relation(entity(A,student),entity(B,program),is_enrolled_in)|A]|B]-[A|B],
     s([mode:gen, type:fact, sem:Sem], S, []),  append(S1,['.'], S), atomic_list_concat(S1,' ',S2),
     atom_concat(S2,'.', Sen), write(Sen), nl, nl.
