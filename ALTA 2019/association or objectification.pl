@@ -46,17 +46,17 @@ np([mode:proc, num:N, type:ob_fact, func:_, arg:Sem]) -->
   { lexicon([cat:noun, wform:WForm, num:N, type:entity, arg:_X, sem:Sem]) , lower_case(WForm, WForm1)}, WForm1.
   
 np([mode:gen, num:N, type:ob_fact, func:subj, arg:X, arg:Y, sem:Sem]) -->
-  { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) },
+  { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg:X, arg:Y, sem:Sem]) },
   { lexicon([cat:noun, wform:Noun, num:N, type:entity, arg:_X, sem:X]), lower_case(Noun, NP) }, NP.
   
 np([mode:gen, num:N, type:ob_fact, func:obj, sem:Y]) -->
   { lexicon([cat:noun, wform:Noun, num:N, type:entity, arg:_X, sem:Y]), lower_case(Noun, NP) }, NP.
   
 v([mode:proc, type:ob_fact, label:Sem]) -->
-  {lexicon([cat:verb, wform:List3, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem])}, List3.
+  {lexicon([cat:verb, wform:List3, num:sg, type:brel, arg:X, arg:Y, sem:Sem])}, List3.
    
 v([mode:gen, type:ob_fact, sem:Sem])-->
-   { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg1:X, arg2:Y, sem:Sem]) }, WForm.
+   { lexicon([cat:verb, wform:WForm, num:sg, type:brel, arg:X, arg:Y, sem:Sem]) }, WForm.
    
 vp([wform:objectify]) --> [objectifies].
 
