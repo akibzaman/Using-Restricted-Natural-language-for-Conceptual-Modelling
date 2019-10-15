@@ -11,7 +11,8 @@ generate_symbols([]).
 generate_symbols([Var|Vars]) :-
     gensym('V', Var),
     generate_symbols(Vars).
-    
+
+   
 % ---------------------------------------------------------
 % json_vars_to_prolog_vars/2
 % ---------------------------------------------------------
@@ -77,3 +78,39 @@ fix_variable(C1=V1, [C2=V2|Rest1], [C1=V1|Rest2]) :-
 
 fix_variable(C1=V1, [C2=V2|Rest1], [C2=V2|Rest2]) :-
     fix_variable(C1=V1, Rest1, Rest2).	
+	
+%--------------------------------------------------------------------------------------
+
+lr_attribute_match(V, SV, P1, P3):-
+  findall(W, lexicon([cat:noun, wform:W, num:N, type:attribute, dt:DT, arg:X, sem:Sem]), Ent),
+  search_v_att_lr(Ent, P1, V), downcase_list(V,V1), append(V1, P3, P1).
+  
+search_v_att_lr([], _, _) :- false.
+
+search_v_att_lr([En|Ent], P1, P2):-
+  downcase_list(En,V), 
+  (sublist(V, P1) -> P2 = En ; search_v_att_lr(Ent, P1, P2)).
+
+downcase_list(AnyCaseList, DownCaseList):-
+  maplist(downcase_atom, AnyCaseList, DownCaseList).
+  
+sublist(Sub, List) :-
+   sublist_(List, Sub).
+   
+sublist_([], []).
+sublist_([H|T], Sub) :-
+	sublist__(T, H, Sub).
+
+sublist__([], H, [H]).
+sublist__([], _, []).
+sublist__([H|T], X, [X|Sub]) :-
+  sublist__(T, H, Sub).
+sublist__([H|T], _, Sub) :-
+  sublist__(T, H, Sub).
+  
+downcase_noun(WForm, W, L1, L2):-
+  downcase_list(WForm, W), append(W, L2, L1).
+  
+morphology(W, Wo):-
+	  (sub_atom(W,_, 2, 0, C), (C == sh; C = ch)); (sub_atom(W,_,1,0,P), (P == s; P == z; P == x)) -> atom_concat(W,es,Wo) ; 
+	  (sub_atom(W,Q,1,0,L), (L == y)) -> sub_atom(W,_,Q,1,L1), atom_concat(L1,ies,Wo) ; atom_concat(W,s,Wo).  
