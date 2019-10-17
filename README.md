@@ -1,4 +1,4 @@
-# Using-Restricted-Natural-language-for-Conceptual-Modelling
+# Using Restricted Natural Language for Conceptual Modelling
 
 
 
