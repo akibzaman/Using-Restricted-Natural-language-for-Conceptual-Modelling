@@ -1,4 +1,4 @@
-
+:- style_check([-discontiguous, -singleton]).
 :- use_module(library(http/json)).
 
 :- op(900, yfx, '=>').
