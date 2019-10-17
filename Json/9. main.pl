@@ -1,6 +1,5 @@
 :- style_check([-discontiguous, -singleton]).
 :- use_module(library(http/json)).
-% :- use_module('6. associative_entity_trel_json').
 :- dynamic lexicon/1.
 :- consult(p_to_j).
 :- consult(test).
@@ -106,10 +105,6 @@ np([mode:gen, num:N, type:fact, pos:P, arg:X, sco:[S,Sem,O], sem:S]) -->
   {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, arg:X, sem:S]) },
   WForm.
   
-%np([mode:gen, num:N, type:fact, pos:P, arg:X, sem:Sem]) -->
-%  {lexicon([cat:noun, wform:WForm, num:sg, type:entity, pos:P, arg:X, sem:Sem])},
-%  WForm.
-  
 verb([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem]) -->
   lexical_rule([cat:verb, num:N, arg:X, arg:Y, sem:Sem]).
 
@@ -134,13 +129,6 @@ generate_sem(WForm, P1, P2, X, Y, B) :-
    atomic_list_concat(WF,'_', Term),
    V = [X,Y],
    B = json(['Rel'=relation, 'Ind'=Term, 'Var'=V]).
-
-% morphology function for a relation (is_enrolled_in --> enrolled_in or belongs_to --> belong_to)
-   
-%morphology_rel([L|L1], L2):-
-%	((L == is) -> L2 = L1) ; 
-%	( porter_stem(L,L3), L2 = [L3|L1]).
-
 
 %----------------------------------------
 %--- ternary Relationship Declaration ---
