@@ -1,5 +1,5 @@
-:- style_check([-discontiguous, -singleton]).
 :- use_module(library(http/json)).
+:- style_check([-discontiguous, -singleton]).
 
 :- op(900, yfx, '=>').
 :- op(800, yfx, '&').
