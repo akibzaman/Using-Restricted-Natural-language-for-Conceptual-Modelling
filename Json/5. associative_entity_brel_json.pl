@@ -101,8 +101,6 @@ test2 :-
 			  ]
 			}',
 	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	%json_vars_to_prolog_vars(JSONTerm, PrologTerm),
-	%JSONTerm = json(['And'=json(['Atom'=Sem])]),
     s([mode:gen, type:fact_ob, sem:JSONTerm], S, []),
     writeq(S),
     nl, nl.  

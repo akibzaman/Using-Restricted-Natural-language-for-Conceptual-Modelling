@@ -14,7 +14,7 @@
 % Fact Type Declaration:- Student is enrolled in program studies units.
 %----------------------------------------------------------------------
 
-s([mode:M, type:tfact, sem:Sem]) --> 
+s([mode:M, type:tfact, sem:json(['And'=json(['Atom'=Sem])])]) --> 
   np([mode:M, num:N, type:tfact, pos:subj, arg:X, sco:Sem, sem:S]), 
   vp([mode:M, num:N, type:tfact, arg:X, arg:Y, arg:Z, sub:S, sem:Sem]), ['.'].
   
@@ -62,10 +62,10 @@ uppercase_first_atom([Atom1|Rest], [Atom2|Rest]) :-
    to_upper(Char, LowerChar),
    atom_codes(Atom2, [LowerChar|Chars1]).
 
-lower_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
-   atom_codes(Atom1, [Char|Chars1]),
-   to_lower(Char, LowerChar),
-   atom_codes(Atom2, [LowerChar|Chars1]). 
+%lower_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
+%   atom_codes(Atom1, [Char|Chars1]),
+%   to_lower(Char, LowerChar),
+%   atom_codes(Atom2, [LowerChar|Chars1]). 
    
 morphology_rel([L|L1], L2):-
 	((L == is) -> L2 = L1) ; 
@@ -81,8 +81,7 @@ lexicon([cat:noun, wform:['program'], num:sg, type:entity, pos:obj, arg:X, sem:j
 %----------------------------------------------------------------------------------------  
 test1 :-
     s([mode:proc, type:tfact, sem:PrologTerm],['Student',enrolled,in,program,studies,unit,'.'], []),
-    prolog_vars_to_json_vars(PrologTerm, JsonTerm), 
-	JSONTerm = json(['And'=json(['Atom'=JsonTerm])]),
+    prolog_vars_to_json_vars(PrologTerm, JSONTerm), 
     atom_json_term(JSON, JSONTerm, [as(atom)]),
     write(JSON).
 	
@@ -102,8 +101,6 @@ test2 :-
 			  }
 			}',
 	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	%json_vars_to_prolog_vars(JSONTerm, PrologTerm),
-	JSONTerm = json(['And'=json(['Atom'=Sem])]),
-    s([mode:gen, type:tfact, sem:Sem], S, []),
+    s([mode:gen, type:tfact, sem:JSONTerm], S, []),
     writeq(S),
     nl, nl.  

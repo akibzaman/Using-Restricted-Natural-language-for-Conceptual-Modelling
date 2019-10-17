@@ -43,7 +43,9 @@ vp([crd:'-', num:N, mode:M, type:const_dp, arg:X, sem:Sco]) -->
     np([num:_, mode:M, type:const_dp, pos:obj, arg:Y, scope:Sem, sem:Sco]).
 
 v([num:N, mode:M, type:const_dp, arg:X, arg:Y, sem:json(['Rel'=relation, 'Ind'=own, 'Var'=[X,Y]])]) -->
-   [own].
+   [owns].
+v([num:N, mode:M, type:const_dp, arg:X, arg:Y, sem:json(['Rel'=relation, 'Ind'=consist_of, 'Var'=[X,Y]])]) -->
+   [consists, of].
 
 qnt([num:N, mode:M, type:const_dp, pos:subj, arg:X, restrictor:JsonHead, scope:JsonBody, 
 					sem:json(['Forall'=json(['Var'=X, 
@@ -74,7 +76,7 @@ lexicon([cat:noun, wform:['Student', name], num:sg, type:attribute, dt:string, a
 % ----------------------------------------------------------------------------------
 
 test1 :-
-   s([mode:proc, type:const_dp, sem:PrologTerm], [Every, student, own, exactly, 1, student, id, and, own, exactly, 1, student, name, '.'], []),
+   s([mode:proc, type:const_dp, sem:PrologTerm], [Every, student, owns, exactly, 1, student, id, and, owns, exactly, 1, student, name, '.'], []),
    prolog_vars_to_json_vars(PrologTerm, JsonTerm), 
    atom_json_term(JSON, JsonTerm, [as(atom)]),
    write(JSON).

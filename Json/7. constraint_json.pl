@@ -88,21 +88,10 @@ test1 :-
     s([type:const, sem:PrologTerm],
       ['Every', student, belongs, to, exactly, 1, department, '.'], []),
     prolog_vars_to_json_vars(PrologTerm, JsonTerm),
-    %RuleMLTerm = json(['RuleML'=json(['Assert'=JsonTerm, '_style'='ERD'])]),
     atom_json_term(Json, JsonTerm, [as(atom)]),
     nl, nl,
     write(Json).
 	
-test3 :-
-    s([type:const, sem:PrologTerm],
-      ['Every', student, belongs, to, at, least, 1, and, at, most, 4, department, '.'], []),
-    prolog_vars_to_json_vars(PrologTerm, JsonTerm),
-    %RuleMLTerm = json(['RuleML'=json(['Assert'=JsonTerm, '_style'='ERD'])]),
-    atom_json_term(Json, JsonTerm, [as(atom)]),
-    nl, nl,
-    write(Json).
-	
-
 test2 :-							   
 	JSON = ' {
 				  "Forall": {
@@ -141,6 +130,14 @@ test2 :-
   s([type:const, sem:JSONTerm], Sentence, []),
   nl, nl,
   write(Sentence).
+
+test3 :-
+    s([type:const, sem:PrologTerm],
+      ['Every', student, belongs, to, at, least, 1, and, at, most, 4, department, '.'], []),
+    prolog_vars_to_json_vars(PrologTerm, JsonTerm),
+    atom_json_term(Json, JsonTerm, [as(atom)]),
+    nl, nl,
+    write(Json).
   
 test4 :-							   
 	JSON = ' {

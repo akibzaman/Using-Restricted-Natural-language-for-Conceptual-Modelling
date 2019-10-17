@@ -13,29 +13,29 @@
 % Fact Type Declaration:- Student is enrolled in program.
 %--------------------------------------------------------
 
-s([mode:M, type:fact, sem:Sem]) --> 
-  np([mode:M, num:N, type:fact, func:subj, arg:X, sco:Sem, sem:S]), 
+s([mode:M, type:fact, sem:json(['And'=json(['Atom'=Sem])])]) --> 
+  np([mode:M, num:N, type:fact, pos:subj, arg:X, sco:Sem, sem:S]), 
   vp([mode:M, num:N, type:fact, arg:X, sub:S, sem:Sem]),
   ['.'].
 
 vp([mode:M, num:N, type:fact, arg:X, sub:S, sem:[S,Sem,O]])-->
   verb([mode:M, num:N, type:fact, arg:X, arg:Y, sem:Sem]),
-  np([mode:M, num:_N, type:fact, func:obj, arg:Y, sem:O]).
+  np([mode:M, num:_N, type:fact, pos:obj, arg:Y, sem:O]).
   
-np([mode:proc, num:N, type:fact, func:subj, arg:X, sco:Sem, sem:S]) -->
-  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:subj, arg:X, sem:S]) },
+np([mode:proc, num:N, type:fact, pos:P, arg:X, sco:Sem, sem:S]) -->
+  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, arg:X, sem:S]) },
   WForm.
 
-np([mode:proc, num:N, type:fact, func:obj, arg:Y, sem:Sem]) -->
-  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:obj, arg:Y, sem:Sem]) }, 
+np([mode:proc, num:N, type:fact, pos:P, arg:Y, sem:Sem]) -->
+  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, arg:Y, sem:Sem]) }, 
   WForm.
   
-np([mode:gen, num:N, type:fact, func:subj, arg:X, sco:[S,Sem,O], sem:S]) -->
-  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:subj, arg:X, sem:S]) },
+np([mode:gen, num:N, type:fact, pos:P, arg:X, sco:[S,Sem,O], sem:S]) -->
+  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, arg:X, sem:S]) },
   WForm.
   
-np([mode:gen, num:N, type:fact, func:obj, arg:X, sem:Sem]) -->
-  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:obj, arg:X, sem:Sem])},
+np([mode:gen, num:N, type:fact, pos:P, arg:X, sem:Sem]) -->
+  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, arg:X, sem:Sem])},
   WForm.
   
 verb([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem]) -->
@@ -81,9 +81,8 @@ lexicon([cat:noun, wform:['program'], num:sg, type:entity, pos:obj, arg:X, sem:j
    
 test1 :-
     s([mode:proc, type:fact, sem:PrologTerm],['Student', is, enrolled, in, program, '.'], []),!,
-	prolog_vars_to_json_vars(PrologTerm, JsonTerm), 
-	JSONTerm = json(['And'=json(['Atom'=JsonTerm])]),
-    atom_json_term(JSON, JSONTerm, [as(atom)]),
+	prolog_vars_to_json_vars(PrologTerm, JsonTerm),
+    atom_json_term(JSON, JsonTerm, [as(atom)]),
     write(JSON).
  
 test2 :-
@@ -96,7 +95,6 @@ test2 :-
 			  }
 			}',
 	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	JSONTerm = json(['And'=json(['Atom'=Sem])]),
-    s([mode:gen, type:fact, sem:Sem], S, []),
+    s([mode:gen, type:fact, sem:JSONTerm], S, []),
     writeq(S),
     nl, nl.  

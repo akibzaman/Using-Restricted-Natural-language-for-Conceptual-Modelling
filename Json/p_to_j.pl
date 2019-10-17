@@ -114,3 +114,8 @@ downcase_noun(WForm, W, L1, L2):-
 morphology(W, Wo):-
 	  (sub_atom(W,_, 2, 0, C), (C == sh; C = ch)); (sub_atom(W,_,1,0,P), (P == s; P == z; P == x)) -> atom_concat(W,es,Wo) ; 
 	  (sub_atom(W,Q,1,0,L), (L == y)) -> sub_atom(W,_,Q,1,L1), atom_concat(L1,ies,Wo) ; atom_concat(W,s,Wo).  
+
+lower_case_first_atom([Atom1|Rest], [Atom2|Rest]) :-
+   atom_codes(Atom1, [Char|Chars1]),
+   to_lower(Char, LowerChar),
+   atom_codes(Atom2, [LowerChar|Chars1]).
