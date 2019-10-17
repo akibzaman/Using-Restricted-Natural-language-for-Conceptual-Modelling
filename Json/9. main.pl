@@ -1,3 +1,10 @@
+% --------------------------------------------
+% Bidirectional Grammar for Lexicon Creation
+% with JSON as internal formal representation
+% Author: Bayzid Ashik Hossain
+% Date: 17-10-2019
+% --------------------------------------------
+
 :- style_check([-discontiguous, -singleton]).
 :- use_module(library(http/json)).
 :- dynamic lexicon/1.
