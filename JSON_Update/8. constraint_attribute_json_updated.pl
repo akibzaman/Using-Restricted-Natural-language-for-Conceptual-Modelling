@@ -144,4 +144,4 @@ test2 :-
   json_vars_to_prolog_vars(JSONTerm, PrologVars),
   s([type:const_dp, sem:PrologVars], Sentence, []),!,
   nl, nl,
-  write(Sentence).
+  writeq(Sentence).
