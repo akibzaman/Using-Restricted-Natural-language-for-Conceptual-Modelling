@@ -15,7 +15,7 @@ s([mode:M, type:tfact, sem:json(['And'=json(['Atom'=[Res|Sco]])])]) -->
   np([mode:M, num:N, type:tfact, pos:subj, arg:X, sem:Res]), 
   vp([mode:M, num:N, type:tfact, arg:X, arg:Y, arg:Z, sem:Sco]), ['.'].
   
-np([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]) -->                 % INRTODUCED!!!
+np([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]) -->                
   noun([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]). 
   
 vp([mode:proc, num:N, type:tfact, arg:X, arg:Y, arg:Z, sem:[V,Ob1,Ob2]])-->
@@ -47,7 +47,7 @@ verb([mode:gen, type:tfact, slot:WForm2, pos:end, sem:V])--> WForm2.
 lexical_rule([mode:proc, num:N, type:tfact, arg:X, arg:Y, arg:Z, label:List1, label:List2, sem:Sem], P1, P1):-
    morphology_rel(List1, L1), atomic_list_concat(L1, '_', L2), 
    morphology_rel(List2, L3), atomic_list_concat(L3, '_', L4),  
-   atomic_list_concat([L2,'__',L4], L), V = [X,Y,Z], %Sem =.. [relation,L,X,Y,Z],
+   atomic_list_concat([L2,'__',L4], L), V = [X,Y,Z], 
    Sem = json(['Rel'=relation, 'Ind'=L, 'Var'=V]),
    assert(lexicon([cat:verb, wform:[List1, List2], num:sg, type:trel, arg:X, label:L2, arg:Y, label:L4, arg:Z, sem:Sem])).
    
@@ -92,8 +92,8 @@ test2 :-
 				]
 			  }
 			}',
-	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	json_vars_to_prolog_vars(JSONTerm, PrologVars),
+    atom_json_term(JSON, JSONTerm, [as(atom)]),
+    json_vars_to_prolog_vars(JSONTerm, PrologVars),
     s([mode:gen, type:tfact, sem:PrologVars], S, []),!,
     writeq(S),
     nl, nl.  
