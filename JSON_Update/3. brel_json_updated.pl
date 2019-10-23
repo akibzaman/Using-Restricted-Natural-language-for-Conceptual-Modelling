@@ -79,7 +79,7 @@ test1 :-
     write(JSON).
  
 test2 :-
-	JSON = '{"And": {
+     JSON = '{"And": {
 				"Atom": [
 				  {"Rel":"entity", "Ind":"student", "Var":"X"},
 				  {"Rel":"relation", "Ind":"enrolled_in", "Var": ["X", "Y" ]},
@@ -87,8 +87,8 @@ test2 :-
 				]
 			  }
 			}',
-	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	json_vars_to_prolog_vars(JSONTerm, PrologVars),
+    atom_json_term(JSON, JSONTerm, [as(atom)]),
+    json_vars_to_prolog_vars(JSONTerm, PrologVars),
     s([mode:gen, type:fact, sem:PrologVars], S, []),!,
     writeq(S),
     nl, nl.  
