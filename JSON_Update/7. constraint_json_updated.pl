@@ -176,5 +176,5 @@ test4 :-
   atom_json_term(JSON, JSONTerm, [as(atom)]),
   json_vars_to_prolog_vars(JSONTerm, PrologVars),
   s([type:const, sem:PrologVars], Sentence, []),!,
-  nl, nl,
-  writeq(Sentence).
+  writeq(Sentence), 
+  nl, nl,.
