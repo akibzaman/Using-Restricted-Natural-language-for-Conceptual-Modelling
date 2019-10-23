@@ -6,10 +6,9 @@
 :- use_module(library(http/json)).
 :- consult(predicates).
 
-% :- op(900, yfx, '==>').    THIS IS NOT NECESSARY
 % :- op(800, yfx, '&').
 % :- op(900, yfx, ':').
-% :- op(800, yfx, '#'). 
+
 
 
 s([mode:M, type:attribute, sem:json(['Atom'=Sem])]) --> 
