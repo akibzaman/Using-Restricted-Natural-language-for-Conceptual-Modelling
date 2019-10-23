@@ -92,7 +92,7 @@ test1 :-
     write(Json).
 	
 test2 :-							   
-	JSON = ' {
+    JSON = ' {
 				  "Forall": {
 					  "Var":"V1",
 					  "Implies": {
@@ -129,7 +129,7 @@ test2 :-
   json_vars_to_prolog_vars(JSONTerm, PrologVars),
   s([type:const, sem:PrologVars], Sentence, []),!,
   nl, nl,
-  write(Sentence).
+  writeq(Sentence).
 
 test3 :-
     s([type:const, sem:PrologTerm],
@@ -140,7 +140,7 @@ test3 :-
     write(Json).
   
 test4 :-							   
-	JSON = ' {
+    JSON = ' {
 			  "Forall": {
 				"Var":"V1",
 				"Implies": {
@@ -177,4 +177,4 @@ test4 :-
   json_vars_to_prolog_vars(JSONTerm, PrologVars),
   s([type:const, sem:PrologVars], Sentence, []),!,
   nl, nl,
-  write(Sentence).
+  writeq(Sentence).
