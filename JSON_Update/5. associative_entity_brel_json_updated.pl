@@ -3,10 +3,8 @@
 :- style_check([-discontiguous, -singleton]).
 :- use_module(library(http/json)).
   
-:- op(900, yfx, '==>').
 :- op(800, yfx, '&').
-:- op(900, yfx, ':').
-:- op(800, yfx, '#').  
+:- op(900, yfx, ':'). 
 :- consult(predicates). 
 
 
