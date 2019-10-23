@@ -44,8 +44,8 @@ process_attribute([wform:List3, dt:D, arg:X, sem:Sem], List1, List2):-
 
 test1 :-
     s([mode:proc, type:attribute, sem:PrologTerm],
-      ['Student', name, is, of, string, data, type, '.'], []),
-	prolog_vars_to_json_vars(PrologTerm, JSONTerm),
+    ['Student', name, is, of, string, data, type, '.'], []),
+    prolog_vars_to_json_vars(PrologTerm, JSONTerm),
     atom_json_term(JSON, JSONTerm, [as(atom)]),
     write(JSON).
 	
@@ -59,5 +59,5 @@ test2 :-
 			}',
 	atom_json_term(JSON, JSONTerm, [as(atom)]),
 	json_vars_to_prolog_vars(JSONTerm, PrologVars),
-    s([mode:gen, type:attribute, sem:PrologVars], S, []),!, 
+        s([mode:gen, type:attribute, sem:PrologVars], S, []),!, 
 	writeq(S), nl, nl.
