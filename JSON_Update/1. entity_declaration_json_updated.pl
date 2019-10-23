@@ -23,7 +23,7 @@ noun([mode:gen, num:N, type:entity, pos:subj, sem:Sem]) -->
 
 %------------------------------------------------------------
 
-lexical_rule([cat:noun, num:sg, type:entity, pos:P, sem:Sems], List1, List2) :-       % I WOULD ADD: pos:subj
+lexical_rule([cat:noun, num:sg, type:entity, pos:P, sem:Sems], List1, List2) :-       
    process_noun([wform:WForm, List4, List5, List1, List2]), 
    downcase_list(WForm, DWForm), last(WForm, L), morphology(L, Lp), 
    append([W], [L], DWForm), append([W], [Lp], WLp), 
@@ -43,8 +43,8 @@ process_noun([wform:List3, List4, List5, List1, List2]) :-
   
 test1 :-
     s([mode:proc, type:entity, sem:PrologTerm],
-      ['Fish', tank, is, an, entity, type, '.'], []),
-	prolog_vars_to_json_vars(PrologTerm, JSONTerm),
+    ['Fish', tank, is, an, entity, type, '.'], []),
+    prolog_vars_to_json_vars(PrologTerm, JSONTerm),
     atom_json_term(JSON, JSONTerm, [as(atom)]),
     writeq(JSON).
 	
@@ -57,8 +57,8 @@ test2 :-
 							"Var":"X"              
 						}
 			}',
-	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	json_vars_to_prolog_vars(JSONTerm, PrologVars),
+    atom_json_term(JSON, JSONTerm, [as(atom)]),
+    json_vars_to_prolog_vars(JSONTerm, PrologVars),
     s([mode:gen, type:entity, sem:PrologVars], S, []),!, 
     writeq(S), nl, nl.                                  
 	
