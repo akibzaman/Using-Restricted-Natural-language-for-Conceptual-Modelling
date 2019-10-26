@@ -3,10 +3,11 @@
 :- consult(predicates). 
 
 
-s([type:fact_ob, sem:Sem]) -->  
-  np([num:N, type:fact, pos:subj, arg:X, sem:S]), 
-  verb([wform:[associates], num:N, type:fact_ob, sub:S, arg:X, arg:L, sem:Sem]),
-  ['"'], s([type:ob_bfact, sem:L]),['"'],['.'].
+s([type:fact_ob, sem:json(['Atom'=[Res, Sco]])]) -->  
+  np([num:N, type:fact, pos:subj, arg:X, sem:Res]), 
+  verb([wform:[associates], num:N, type:fact_ob, arg:X, arg:L, sem:Sco]),
+  ['"'], s([type:ob_bfact, sem:L]),['"'],
+  ['.'].
   
 np([num:N, type:T, pos:P, arg:X, sem:S]) -->
    noun([num:N, type:T, pos:P, arg:X, sem:S]).
@@ -15,9 +16,11 @@ noun([num:N, type:T, pos:P, arg:X, sem:Sem]) -->
   {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, arg:X, sem:Sem]) },
   WForm.
 
-verb([wform:[associates], num:N, type:fact_ob, sub:S, arg:X, arg:Y, sem:Sem]) -->
-  { lexicon([cat:verb, wform:[associates], num:N, type:ob_rel, sub:S, arg:X, arg:Y, sem:Sem]) },
+
+verb([wform:[associates], num:N, type:fact_ob, arg:X, arg:Y, sem:Sem]) -->
+  { lexicon([cat:verb, wform:[associates], num:N, type:ob_rel, arg:X, arg:Y, sem:Sem]) },
   [associates].
+
 
 %-------------------------------------------------------------------
 
@@ -39,7 +42,8 @@ lexicon([cat:noun, wform:['Enrolment'], num:sg, type:entity, pos:subj, arg:X, se
 lexicon([cat:noun, wform:['Student'], num:sg, type:entity, pos:subj, arg:X, sem:json(['Rel'=entity, 'Ind'=student, 'Var'=X])]).   
 lexicon([cat:noun, wform:['program'], num:sg, type:entity, pos:obj, arg:X, sem:json(['Rel'=entity, 'Ind'=program, 'Var'=X])]).  
 lexicon([cat:verb, wform:[is, enrolled, in], num:sg, type:brel, arg:X, arg:Y, sem:json(['Rel'=relation, 'Ind'=enrolled_in, 'Var'=[X,Y]])]).
-lexicon([cat:verb, wform:[associates], num:sg, type:ob_rel, sub:S, arg:X, arg:Y, sem:json(['Atom'=[S,json(['Rel'=relation, 'Ind'=associates, 'Var'=X, 'Reify'=Y])]])]).
+
+lexicon([cat:verb, wform:[associates], num:sg, type:ob_rel, arg:X, arg:Y, sem:json(['Rel'=relation, 'Ind'=associates, 'Var'=X, 'Reify'=Y])]).
 
 
 %------------------------------------------------
@@ -74,8 +78,8 @@ test2 :-
 				}
 			  ]
 			}',
-	atom_json_term(JSON, JSONTerm, [as(atom)]),
-	json_vars_to_prolog_vars(JSONTerm, PrologVars),
+    atom_json_term(JSON, JSONTerm, [as(atom)]),
+    json_vars_to_prolog_vars(JSONTerm, PrologVars),
     s([type:fact_ob, sem:PrologVars], S, []),!,
     writeq(S),
     nl, nl.  
