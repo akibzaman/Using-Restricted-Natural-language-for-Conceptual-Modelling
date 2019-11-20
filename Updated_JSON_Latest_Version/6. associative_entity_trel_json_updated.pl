@@ -31,9 +31,9 @@ s([type:ob_tfact, sem:json(['And'=json(['Atom'=[Res|Sco]])])]) -->
 
 vp([num:N, type:ob_tfact, arg:X, sem:[V, Ob1, Ob2]])-->
   verb([wform:[WForm1, WForm2], type:ob_tfact, arg:X, arg:Y, arg:Z, sem:V]),
-  np([num:N, type:ob_tfact, pos:obj, arg:Y, sem:Ob1]),
+  np([num:_N, type:ob_tfact, pos:obj, arg:Y, sem:Ob1]),
   verb([wform:[WForm1, WForm2], type:ob_tfact, sem:_V]),
-  np([num:N, type:ob_tfact, pos:obj, arg:Z, sem:Ob2]).
+  np([num:_N, type:ob_tfact, pos:obj, arg:Z, sem:Ob2]).
 
 verb([wform:[WForm1, WForm2], type:ob_tfact, arg:X, arg:Y, arg:Z, sem:V])-->
    {lexicon([cat:verb, wform:[WForm1,WForm2], num:sg, type:trel, arg:X, arg:Y, arg:Z, sem:V]) }, WForm1.

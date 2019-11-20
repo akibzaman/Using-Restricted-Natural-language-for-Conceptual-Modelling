@@ -31,16 +31,16 @@ verb([mode:proc, num:N, type:fact, arg:X, arg:Y, sem:Sem]) -->
   lexical_rule([cat:verb, num:N, arg:X, arg:Y, sem:Sem]).
 
 verb([mode:gen, num:N, type:fact, arg:X, arg:Y, sem:Sem])-->
-  { lexicon([cat:verb, wform:WForm, num:N, type:brel, arg:X, arg:Y, sem:Sem]) }, WForm.
+  { lexicon([cat:verb, wform:WForm, num:N, type:relation, arg:X, arg:Y, sem:Sem]) }, WForm.
 
 %------------------------------------------------------------------------------
 
 lexical_rule([cat:verb, num:N, arg:X, arg:Y, sem:B], P1, P2) :-
   generate_sem(WForm, P1, P2, X, Y, B),
   (
-  assert(lexicon([cat:verb, wform:WForm, num:N, type:brel, arg:X, arg:Y, sem:B]))
+  assert(lexicon([cat:verb, wform:WForm, num:N, type:relation, arg:X, arg:Y, sem:B]))
   ;
-  retract(lexicon([cat:verb, wform:WForm, num:N, type:brel, arg:X, arg:Y, sem:B]))
+  retract(lexicon([cat:verb, wform:WForm, num:N, type:relation, arg:X, arg:Y, sem:B]))
   ).
   
 

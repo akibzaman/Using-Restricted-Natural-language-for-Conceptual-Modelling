@@ -43,11 +43,11 @@ verb([mode:proc, wform:List3, type:tfact], List1, List2) :-
    append(List3, List2, List1). 
 
 verb([mode:gen, wform:[WForm1, WForm2], type:tfact, arg:X, arg:Y, arg:Z, sem:V]) -->
-   { lexicon([cat:verb, wform:[WForm1, WForm2], num:sg, type:trel, arg:X, arg:Y, arg:Z, sem:V]) }, 
+   { lexicon([cat:verb, wform:[WForm1, WForm2], num:sg, type:relation, arg:X, arg:Y, arg:Z, sem:V]) }, 
    WForm1.
 
 verb([mode:gen, wform:[WForm1, WForm2], type:tfact, sem:_V]) -->
-   { lexicon([cat:verb, wform:[WForm1, WForm2], num:sg, type:trel, arg:_X, arg:_Y, arg:Z, sem:_V]) }, 
+   { lexicon([cat:verb, wform:[WForm1, WForm2], num:sg, type:relation, arg:_X, arg:_Y, arg:Z, sem:_V]) }, 
    WForm2.
 
    
@@ -58,7 +58,7 @@ lexical_rule([mode:proc, wform:[WForm1, WForm2], num:N, type:tfact, arg:X, arg:Y
    morphology_rel(WForm2, L3), atomic_list_concat(L3, '_', L4),  
    atomic_list_concat([L2,'__',L4], L), V = [X,Y,Z],
    Sem = json(['Rel'=relation, 'Ind'=L, 'Var'=V]),
-   assert(lexicon([cat:verb, wform:[WForm1, WForm2], num:sg, type:trel, arg:X, arg:Y, arg:Z, sem:Sem])).
+   assert(lexicon([cat:verb, wform:[WForm1, WForm2], num:sg, type:relation, arg:X, arg:Y, arg:Z, sem:Sem])).
 
 lower_case(Noun, NP):-
    lower_case_first_atom(Noun, NP).

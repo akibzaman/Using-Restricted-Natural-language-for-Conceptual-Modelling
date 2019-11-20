@@ -4,17 +4,17 @@
 
 
 s([mode:M, type:attribute, sem:json(['Atom'=Sem])]) --> 
-  np([mode:M, num:N, type:attribute, pos:subj, dt:DT, sem:Sem]),       
+  np([mode:M, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem]),       
   [is, of, DT, data, type, '.'].
 
-np([mode:M, num:N, type:attribute, pos:subj, dt:DT, sem:Sem]) -->
-   noun([mode:M, num:N, type:attribute, pos:subj, dt:DT, sem:Sem]).
+np([mode:M, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem]) -->
+   noun([mode:M, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem]).
 
-noun([mode:proc, num:N, type:attribute, pos:subj, dt:DT, sem:Sem])-->     
-   lexical_rule([cat:noun, wform:WForm, num:N, type:attribute, pos:subj, dt:DT, arg:_X, sem:Sem]).
+noun([mode:proc, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem])-->     
+   lexical_rule([cat:noun, wform:WForm, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem]).
    
-noun([mode:gen, num:N, type:attribute, pos:subj, dt:DT, sem:Sem])-->
-   { lexicon([cat:noun, wform:WForm, num:N, type:attribute, pos:subj, dt:DT, arg:_X, sem:Sem]) },
+noun([mode:gen, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem])-->
+   { lexicon([cat:noun, wform:WForm, num:N, type:attribute, pos:subj, dt:DT, arg:X, sem:Sem]) },
    WForm. 
 
 %---------------------------------------------------------------------------------------------

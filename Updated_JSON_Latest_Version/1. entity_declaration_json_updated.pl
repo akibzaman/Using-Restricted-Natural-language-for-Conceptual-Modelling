@@ -3,17 +3,17 @@
 :- consult(predicates).      
 
 s([mode:M, type:entity, sem:json(['Atom'=Sem])]) --> 
-  np([mode:M, num:sg, type:entity, pos:subj, sem:Sem]), 
+  np([mode:M, num:sg, type:entity, pos:subj, arg:X, sem:Sem]), 
   [is, an, entity, type], ['.'].
 
-np([mode:M, num:N, type:T, pos:P, sem:Sem]) --> 
-  noun([mode:M, num:N, type:T, pos:P, sem:Sem]). 
+np([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]) --> 
+  noun([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]). 
 
-noun([mode:proc, num:N, type:entity, pos:subj, sem:Sem]) -->        
+noun([mode:proc, num:N, type:entity, pos:subj, arg:X, sem:Sem]) -->        
   lexical_rule([cat:noun, num:N, type:entity, pos:subj, sem:Sem]). 
 
-noun([mode:gen, num:N, type:entity, pos:subj, sem:Sem]) -->         
-  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:P, init:yes, arg:_X, sem:Sem])}, 
+noun([mode:gen, num:N, type:entity, pos:subj, arg:X, sem:Sem]) -->         
+  {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:subj, init:yes, arg:X, sem:Sem])}, 
   WForm. 
 
 %------------------------------------------------------------

@@ -30,12 +30,12 @@ vp([crd:'+', num:N, type:const_dp, arg:X, sem:json(['Exists'=[S1, S2]])]) -->
 
 vp([crd:'+', num:N, type:const_dp, arg:X, sem:Sem]) -->   
     verb([num:N, type:const_dp, arg:X, arg:Y, sem:Sco]), 
-    np([num:_, type:const_dp, pos:obj, arg:Y, sco:Sco, sem:Sem]).
+    np([num:_N, type:const_dp, pos:obj, arg:Y, sco:Sco, sem:Sem]).
 
 
 vp([crd:'-', num:N, type:const_dp, arg:X, sem:Sem]) -->   
     verb([num:N, type:const_dp, arg:X, arg:Y, sem:Sco]), 
-    np([num:_, type:const_dp, pos:obj, arg:Y, sco:Sco, sem:Sem]).
+    np([num:_N, type:const_dp, pos:obj, arg:Y, sco:Sco, sem:Sem]).
    
 verb([num:N, type:const_dp, arg:X, arg:Y, sem:Sem]) -->
    { lexicon([cat:verb, wform:WForm, num:N, arg:X, arg:Y, sem:Sem]) }, WForm.
