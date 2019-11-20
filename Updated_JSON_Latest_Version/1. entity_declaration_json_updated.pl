@@ -10,7 +10,7 @@ np([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]) -->
   noun([mode:M, num:N, type:T, pos:P, arg:X, sem:Sem]). 
 
 noun([mode:proc, num:N, type:entity, pos:subj, arg:X, sem:Sem]) -->        
-  lexical_rule([cat:noun, num:N, type:entity, pos:subj, sem:Sem]). 
+  lexical_rule([cat:noun, num:N, type:entity, pos:subj, arg:X, sem:Sem]). 
 
 noun([mode:gen, num:N, type:entity, pos:subj, arg:X, sem:Sem]) -->         
   {lexicon([cat:noun, wform:WForm, num:N, type:entity, pos:subj, init:yes, arg:X, sem:Sem])}, 
@@ -18,7 +18,7 @@ noun([mode:gen, num:N, type:entity, pos:subj, arg:X, sem:Sem]) -->
 
 %------------------------------------------------------------
 
-lexical_rule([cat:noun, num:sg, type:entity, pos:subj, sem:Sems], List1, List2) :-  
+lexical_rule([cat:noun, num:sg, type:entity, pos:subj, arg:X, sem:Sems], List1, List2) :-  
    process_noun([wform:WForm, List5, List1, List2]), 
    downcase_list(WForm, DWForm), last(WForm, L), morphology(L, Lp), 
    append([W], [L], DWForm), append([W], [Lp], PWForm), 
