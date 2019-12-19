@@ -1,0 +1,169 @@
+1. ORM subset constraint:
+
+"If 'Student is enrolled in program' then 'Student studies unit'."
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<Forall>
+	<Var>V1</Var>
+	<Implies>
+		<head>
+			<Exists>
+				<Var>V2</Var>
+				<And>
+					<Atom>
+						<Rel>entity</Rel>
+						<Ind>student</Ind>
+						<Var>V1</Var>
+					</Atom>
+					<Atom>
+						<Rel>relation</Rel>
+						<Ind>enrolled_in</Ind>
+						<Var>V1</Var>
+						<Var>V2</Var>
+					</Atom>
+					<Atom>
+						<Rel>entity</Rel>
+						<Ind>program</Ind>
+						<Var>V2</Var>
+					</Atom>
+				</And>
+			</Exists>
+		</head>
+		<body>
+			<Exists>
+				<Var>V3</Var>
+				<And>
+					<Atom>
+						<Rel>entity</Rel>
+						<Ind>student</Ind>
+						<Var>V1</Var>
+					</Atom>
+					<Atom>
+						<Rel>relation</Rel>
+						<Ind>study</Ind>
+						<Var>V1</Var>
+						<Var>V3</Var>
+					</Atom>
+					<Atom>
+						<Rel>entity</Rel>
+						<Ind>unit</Ind>
+						<Var>V3</Var>
+					</Atom>
+				</And>
+			</Exists>
+		</body>
+	</Implies>
+</Forall>
+
+2. ORM inheritance constraint (complete and disjoint):
+
+"Every team member is a coach or is a player."
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<Forall>
+	<Var>V1</Var>
+	<Implies>
+		<head>
+			<Atom>
+				<Rel>entity</Rel>
+				<Ind>team_member</Ind>
+				<Var>V1</Var>
+			</Atom>
+		</head>
+		<body>
+			<And>
+				<Atom>
+					<Or>
+						<Exists>
+							<Var>V2</Var>
+							<And>
+								<Atom>
+									<Rel>relation</Rel>
+									<Ind>subclass_of</Ind>
+									<Var>V2</Var>
+									<Var>V1</Var>
+								</Atom>
+								<Atom>
+									<Rel>entity</Rel>
+									<Ind>coach</Ind>
+									<Var>V2</Var>
+								</Atom>
+							</And>
+						</Exists>
+						<Exists>
+							<Var>V3</Var>
+							<And>
+								<Atom>
+									<Rel>relation</Rel>
+									<Ind>subclass_of</Ind>
+									<Var>V3</Var>
+									<Var>V1</Var>
+								</Atom>
+								<Atom>
+									<Rel>entity</Rel>
+									<Ind>player</Ind>
+									<Var>V3</Var>
+								</Atom>
+							</And>
+						</Exists>
+					</Or>
+				</Atom>
+				<Atom>
+					<Rel>relation</Rel>
+					<Ind>inheritence</Ind>
+					<Var>V4</Var>
+					<Data>
+						<_type>xs:string</_type>
+						<__text>complete and disjoint</__text>
+					</Data>
+				</Atom>
+			</And>
+		</body>
+	</Implies>
+</Forall>
+
+3. UML inheritance example:
+
+"Every undergraduate student is a subclass of student."
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<Forall>
+	<Var>V1</Var>
+	<Implies>
+		<head>
+			<Atom>
+				<Rel>entity</Rel>
+				<Ind>undergraduate_student</Ind>
+				<Var>V1</Var>
+			</Atom>
+		</head>
+		<body>
+			<Exists>
+				<Var>V2</Var>
+				<And>
+					<Atom>
+						<Rel>relation</Rel>
+						<Ind>subclass_of</Ind>
+						<Var>V1</Var>
+						<Var>V2</Var>
+					</Atom>
+					<Atom>
+						<Rel>entity</Rel>
+						<Ind>student</Ind>
+						<Var>V2</Var>
+					</Atom>
+				</And>
+			</Exists>
+		</body>
+	</Implies>
+</Forall>
+
+4. Disjoint binary relationship in ORM.
+
+For each Person and Book, at most one of the following holds: 
+	that Person reviewed that Book; 
+	that Person authored that Book.
+	
+--------------------------------------------------------------
+
+Every persom may review a book or may author a book. (optional)	
