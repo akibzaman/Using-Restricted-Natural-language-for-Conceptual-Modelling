@@ -49,8 +49,6 @@ lexicon([cat:noun, wform:[post, graduate, student], num:sg, type:entity, pos:obj
 		sem:json(['Rel'=entity, 'Ind'=post_graduate_student, 'Var'=X])]).
 
 
-%lexicon([cat:copula, wform:[is], num:sg, arg:X, arg:Y, sem:json(['Rel'=relation, 'Ind'=subclass_of, 'Var'=[Y, X]])]).
-
 % ----------------------------------------------------------------------------------
 
 test1 :-
