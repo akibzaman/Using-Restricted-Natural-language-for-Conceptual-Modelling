@@ -1,0 +1,6 @@
+:- style_check([-discontiguous, -singleton]).
+:- use_module(library(http/json)).
+:- dynamic lexicon/1.
+:- consult(lexgen).
+:- consult(predicates).
+:- consult(test).
