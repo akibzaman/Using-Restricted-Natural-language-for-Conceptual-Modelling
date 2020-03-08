@@ -1,0 +1,981 @@
+{ "RuleML":
+{ "Assert":[
+{"Atom": {"Rel":"entity", "Ind":"student", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"program", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"course", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"graduate_student", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"undergraduate_student", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"registration", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"course_offering", "Var":"V1"}},
+{"Atom": {"Rel":"entity", "Ind":"tutorship", "Var":"V1"}},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"student_id",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"student_name",
+    "Var": {"_type":"string", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"program_id",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"program_name",
+    "Var": {"_type":"string", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"course_id",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"course_name",
+    "Var": {"_type":"string", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"registration_semester",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"registration_grade",
+    "Var": {"_type":"string", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"registration_year",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"course_offering_year",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "Atom": {
+    "Rel":"attribute",
+    "Ind":"course_offering_semester",
+    "Var": {"_type":"integer", "__text":"V1"}
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"student", "Var":"V1"},
+      {"Rel":"relation", "Ind":"enrolled_in", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"program", "Var":"V2"}
+    ]
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"program", "Var":"V1"},
+      {"Rel":"relation", "Ind":"enrolled_by", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"student", "Var":"V2"}
+    ]
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"student", "Var":"V1"},
+      {"Rel":"relation", "Ind":"regist_for", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+    ]
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"student", "Var":"V1"},
+      {"Rel":"relation", "Ind":"study", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+    ]
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"course", "Var":"V1"},
+      {"Rel":"relation", "Ind":"studied_by", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"student", "Var":"V2"}
+    ]
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"graduate_student", "Var":"V1"},
+      {"Rel":"relation", "Ind":"teach", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+    ]
+  }
+},
+{
+  "And": {
+    "Atom": [
+      {"Rel":"entity", "Ind":"program", "Var":"V1"},
+      {"Rel":"relation", "Ind":"offer", "Var": ["V1", "V2" ]},
+      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+    ]
+  }
+},
+{
+  "Atom": [
+    {"Rel":"entity", "Ind":"registration", "Var":"V1"},
+    {
+      "Rel":"relation",
+      "Ind":"objectifies",
+      "Var":"V1",
+      "Reify": {
+	"And": {
+	  "Atom": [
+	    {"Rel":"entity", "Ind":"student", "Var":"V2"},
+	    {
+	      "Rel":"relation",
+	      "Ind":"regist_for",
+	      "Var": ["V2", "V3" ]
+	    },
+	    {"Rel":"entity", "Ind":"course", "Var":"V3"}
+	  ]
+	}
+      }
+    }
+  ]
+},
+{
+  "Atom": [
+    {"Rel":"entity", "Ind":"course_offering", "Var":"V1"},
+    {
+      "Rel":"relation",
+      "Ind":"objectifies",
+      "Var":"V1",
+      "Reify": {
+	"And": {
+	  "Atom": [
+	    {"Rel":"entity", "Ind":"program", "Var":"V2"},
+	    {"Rel":"relation", "Ind":"offer", "Var": ["V2", "V3" ]},
+	    {"Rel":"entity", "Ind":"course", "Var":"V3"}
+	  ]
+	}
+      }
+    }
+  ]
+},
+{
+  "Atom": [
+    {"Rel":"entity", "Ind":"tutorship", "Var":"V1"},
+    {
+      "Rel":"relation",
+      "Ind":"objectifies",
+      "Var":"V1",
+      "Reify": {
+	"And": {
+	  "Atom": [
+	    {"Rel":"entity", "Ind":"graduate_student", "Var":"V2"},
+	    {"Rel":"relation", "Ind":"teach", "Var": ["V2", "V3" ]},
+	    {"Rel":"entity", "Ind":"course", "Var":"V3"}
+	  ]
+	}
+      }
+    }
+  ]
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"student", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {
+		"Rel":"relation",
+		"Ind":"enrolled_in",
+		"Var": ["V1", "V2" ]
+	      },
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"program", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"program", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {
+		"Rel":"relation",
+		"Ind":"enrolled_by",
+		"Var": ["V1", "V2" ]
+	      },
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:string", "__text":"unbound"}
+	      },
+	      {"Rel":"entity", "Ind":"student", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"course_offering", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"include", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"program", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"course_offering", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"include", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"registration", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"include", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"student", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"registration", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"include", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"tutorship", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"include", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"graduate_student", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"tutorship", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"include", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"student", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"study", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:string", "__text":"unbound"}
+	      },
+	      {"Rel":"entity", "Ind":"course", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"course", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {
+		"Rel":"relation",
+		"Ind":"studied_by",
+		"Var": ["V1", "V2" ]
+	      },
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:string", "__text":"unbound"}
+	      },
+	      {"Rel":"entity", "Ind":"student", "Var":"V2"}
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"student", "Var":"V1"}},
+      "body": {
+	"Exists": [
+	  {
+	    "Var":"V2",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V2" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"student_id",
+		  "Var": {"_type":"integer", "__text":"V2"}
+		}
+	      ]
+	    }
+	  },
+	  {
+	    "Var":"V3",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V3" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"student_name",
+		  "Var": {"_type":"string", "__text":"V3"}
+		}
+	      ]
+	    }
+	  }
+	]
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"program", "Var":"V1"}},
+      "body": {
+	"Exists": [
+	  {
+	    "Var":"V2",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V2" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"program_id",
+		  "Var": {"_type":"integer", "__text":"V2"}
+		}
+	      ]
+	    }
+	  },
+	  {
+	    "Var":"V3",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V3" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"program_name",
+		  "Var": {"_type":"string", "__text":"V3"}
+		}
+	      ]
+	    }
+	  }
+	]
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"course", "Var":"V1"}},
+      "body": {
+	"Exists": [
+	  {
+	    "Var":"V2",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V2" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"course_id",
+		  "Var": {"_type":"integer", "__text":"V2"}
+		}
+	      ]
+	    }
+	  },
+	  {
+	    "Var":"V3",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V3" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"course_name",
+		  "Var": {"_type":"string", "__text":"V3"}
+		}
+	      ]
+	    }
+	  }
+	]
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"registration", "Var":"V1"}},
+      "body": {
+	"Exists": [
+	  {
+	    "Var":"V2",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V2" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"registration_semester",
+		  "Var": {"_type":"integer", "__text":"V2"}
+		}
+	      ]
+	    }
+	  },
+	  {
+	    "Var":"V3",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V3" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"registration_year",
+		  "Var": {"_type":"integer", "__text":"V3"}
+		}
+	      ]
+	    }
+	  }
+	]
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"registration", "Var":"V1"}},
+      "body": {
+	"Exists": {
+	  "Var":"V2",
+	  "And": {
+	    "Atom": [
+	      {"Rel":"relation", "Ind":"own", "Var": ["V1", "V2" ]},
+	      {
+		"Rel":"min",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"max",
+		"Var":"V2",
+		"Data": {"_type":"xs:integer", "__text":"1"}
+	      },
+	      {
+		"Rel":"attribute",
+		"Ind":"registration_grade",
+		"Var": {"_type":"string", "__text":"V2"}
+	      }
+	    ]
+	  }
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"course_offering", "Var":"V1"}},
+      "body": {
+	"Exists": [
+	  {
+	    "Var":"V2",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V2" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"course_offering_semester",
+		  "Var": {"_type":"integer", "__text":"V2"}
+		}
+	      ]
+	    }
+	  },
+	  {
+	    "Var":"V3",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"own", "Var": ["V1", "V3" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"attribute",
+		  "Ind":"course_offering_year",
+		  "Var": {"_type":"integer", "__text":"V3"}
+		}
+	      ]
+	    }
+	  }
+	]
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {
+	"Atom": {"Rel":"entity", "Ind":"graduate_student", "Var":"V1"}
+      },
+      "body": {"Rel":"entity", "Ind":"student", "Var":"V1"}
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {
+	"Atom": {"Rel":"entity", "Ind":"undergraduate_student", "Var":"V1"}
+      },
+      "body": {"Rel":"entity", "Ind":"student", "Var":"V1"}
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"student", "Var":"V1"}},
+      "body": {
+	"Or": {
+	  "Atom": [
+	    {"Rel":"entity", "Ind":"graduate_student", "Var":"V1"},
+	    {
+	      "Rel":"entity",
+	      "Ind":"undergraduate_student",
+	      "Var":"V1"
+	    }
+	  ]
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {
+	"Atom": {"Rel":"entity", "Ind":"undergraduate_student", "Var":"V1"}
+      },
+      "body": {
+	"Neg": {
+	  "Atom": {"Rel":"entity", "Ind":"graduate_student", "Var":"V1"}
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {
+	"Atom": {"Rel":"entity", "Ind":"graduate_student", "Var":"V1"}
+      },
+      "body": {
+	"Var":"V2",
+	"Neg": {
+	  "And": [
+	    {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"study", "Var": ["V1", "V2" ]},
+		{"Rel":"entity", "Ind":"course", "Var":"V2"}
+	      ]
+	    },
+	    {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"teach", "Var": ["V1", "V2" ]},
+		{"Rel":"entity", "Ind":"course", "Var":"V2"}
+	      ]
+	    }
+	  ]
+	}
+      }
+    }
+  }
+},
+{
+  "Forall": {
+    "Var":"V1",
+    "Implies": {
+      "head": {"Atom": {"Rel":"entity", "Ind":"student", "Var":"V1"}},
+      "body": [
+	{
+	  "Exists": {
+	    "Var":"V2",
+	    "And": {
+	      "Atom": [
+		{
+		  "Rel":"relation",
+		  "Ind":"regist_for",
+		  "Var": ["V1", "V2" ]
+		},
+		{
+		  "Rel":"min",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V2",
+		  "Data": {"_type":"xs:string", "__text":"unbound"}
+		},
+		{"Rel":"entity", "Ind":"course", "Var":"V2"}
+	      ]
+	    }
+	  }
+	},
+	{
+	  "Exists": {
+	    "Var":"V3",
+	    "And": {
+	      "Atom": [
+		{"Rel":"relation", "Ind":"study", "Var": ["V1", "V3" ]},
+		{
+		  "Rel":"min",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:integer", "__text":"1"}
+		},
+		{
+		  "Rel":"max",
+		  "Var":"V3",
+		  "Data": {"_type":"xs:string", "__text":"unbound"}
+		},
+		{"Rel":"entity", "Ind":"course", "Var":"V3"}
+	      ]
+	    }
+	  }
+	}
+      ]
+    }
+  }
+}],
+"_style": "ERD"
+}
+}
