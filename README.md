@@ -9,3 +9,10 @@ The key activity to design an information system is conceptual modelling which b
 
 ![CNL based CM](https://github.com/kushol/Using-Restricted-Natural-language-for-Conceptual-Modelling/blob/master/UCMF_1.jpg
 )
+
+
+Publication Links:
+1. https://www.aclweb.org/anthology/U18-1005.pdf
+2. https://link.springer.com/chapter/10.1007/978-3-030-39469-1_1
+3. https://www.aclweb.org/anthology/U19-1017/
+4. https://journals.sagepub.com/doi/10.1177/0165551520921342
